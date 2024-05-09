@@ -11033,22 +11033,22 @@ User.findById(id,function(err,doc){
 
     var code = req.params.id
     
-    
+    console.log(code,'code')
     //console.log(docs[i].uid,'ccc')
     
     //let uid = "SZ125"
     
     
     //TestX.find({year:year,uid:uid},function(err,vocs) {
-    InvoiceFile.find({studentName:code,statement:"true"}).lean().sort({dateValue:1}).then(vocs=>{
+    InvoiceFile.find({studentId:code,statement:"true"}).lean().sort({dateValue:1}).then(vocs=>{
     
     
     for(var x = 0;x<vocs.length;x++){
     let size = vocs.length - 1
     let studentBalance = vocs[size].studentBalance
     let studentName = vocs[x].studentName
-    if( arrStatement[code].length > 0 && arrStatement[code].find(value => value.studentName == studentName) ){
-      arrStatement[code].find(value => value.studentName == studentName).typeBalance = studentBalance;
+    if( arrStatement[code].length > 0 && arrStatement[code].find(value => value.studentId == code) ){
+      arrStatement[code].find(value => value.studentId == code).typeBalance = studentBalance;
       arrStatement[code].push(vocs[x])
     
         }
@@ -11058,7 +11058,7 @@ User.findById(id,function(err,doc){
         
         else{
           arrStatement[code].push(vocs[x])
-          arrStatement[code].find(value => value.studentName == studentName).typeBalance = studentBalance;
+          arrStatement[code].find(value => value.studentId == code).typeBalance = studentBalance;
           } 
     
     
@@ -11137,7 +11137,7 @@ router.get('/statementGen/:id',isLoggedIn,function(req,res){
   //await page.setContent(content)
   //create a pdf document
   await page.emulateMediaType('screen')
-  let height = await page.evaluate(() => document.documentElement.offsetHeight);
+  //let height = await page.evaluate(() => document.documentElement.offsetHeight);
   await page.evaluate(() => matchMedia('screen').matches);
   await page.setContent(content, { waitUntil: 'networkidle0'});
   //console.log(await page.pdf(),'7777')
@@ -11146,10 +11146,10 @@ let filename = 'statement'+'_'+studentName+'.pdf'
   await page.pdf({
   //path:('../gitzoid2/reports/'+year+'/'+month+'/'+uid+'.pdf'),
   path:(`./public/statements/${year}/${term}/statement_${studentName}`+'.pdf'),
-  //format:"A4",
-  /*width:'30cm',
-  height:'21cm',*/
-  height: height + 'px',
+  format:"A4",
+  width:'30cm',
+  height:'21cm',
+  //height: height + 'px',
   printBackground:true
   
   })
@@ -11171,7 +11171,8 @@ let filename = 'statement'+'_'+studentName+'.pdf'
   //console.log(form)
 await Axios({
     method: "POST",
-    url: 'https://portal.steuritinternationalschool.org/clerk/uploadStatement',
+   // url: 'https://portal.steuritinternationalschool.org/clerk/uploadStatement',
+     url: 'http://localhost:8500/clerk/uploadStatement',
     headers: {
       "Content-Type": "multipart/form-data"  
     },
