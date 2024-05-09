@@ -2236,7 +2236,7 @@ console.log(code,'code')
              document.getElementById("price").value= data[i].amountDue
 			  document.getElementById("fileId").value= data[i].fileId
 			  console.log(data[i].fileId,'fileId9')
-			 document.getElementById("frame0").src = `http://localhost:8500/clerk/openInvoiceFile/${data[i].fileId}`
+			 document.getElementById("frame0").src = `https://zoidguelph/clerk/openInvoiceFile/${data[i].fileId}`
        document.getElementById("amountDue").value= data[i].amountDue
 	   let amount =  document.getElementById("amountDue").value
              document.getElementById("quantity").value= 1
@@ -2261,7 +2261,7 @@ console.log(code,'code')
 			console.log(srcV,'shayne')
           document.getElementById("price1").value= data[i].amountDue
           document.getElementById("amountDue1").value= data[i].amountDue
-        document.getElementById("frame1").src = "http://localhost:8500/clerk/openInvoiceFile/"+data[i].fileId
+        document.getElementById("frame1").src = "https://zoidguelph/clerk/openInvoiceFile/"+data[i].fileId
           document.getElementById("quantity1").value= 1
          // document.getElementById("item1").value= data[i].description
           document.getElementById("invoiceNo1").value= data[i].invoiceNumber
@@ -2301,7 +2301,7 @@ console.log(code,'code')
             //document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="title"] ').value = data[i].description
             document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="invoiceNo"] ').value = data[i].invoiceNumber
 			document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="xid"] ').value = data[i]._id
-						document.getElementById(`frame${i}`).src = "http://localhost:8500/clerk/openInvoiceFile/"+data[i].fileId
+						document.getElementById(`frame${i}`).src = "https://zoidguelph/clerk/openInvoiceFile/"+data[i].fileId
 						document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="fileId"] ').value = data[i].fileId
 			document.querySelector('[data-kt-element="item-template"]   [data-kt-element="amountDue"] ').value= data[i].amountDue
 			document.querySelector('[data-kt-element="item-template"]   [data-kt-element="price"] ').value= data[i].amountDue
