@@ -1117,7 +1117,7 @@ let numPasses = tocs.length
           let subjectCode = locs[0].subjectCode
           let term = req.user.term
         StudentSub.find({subjectCode:subjectCode},function(err,noc){
-          if(noc){
+          if(noc.length > 0){
             let class1 = noc[0].class1
          
         
@@ -1129,7 +1129,7 @@ let numPasses = tocs.length
       
       
         TestX.find({year:year,subjectCode:subjectCode,class1:class1,term:term,type3:'class'},function(err,docs) {
-          if(docs){
+          if(docs.length > 0){
 
         
          // console.log(docs,'docs')
@@ -3782,7 +3782,7 @@ if (errors) {
 
 else 
 {
-TeacherSub.findOne({'companyId':companyId,'subjectCode':subjectCode})
+TeacherSub.findOne({'subjectCode':subjectCode})
 .then(teach=>{
   if(teach){
   
