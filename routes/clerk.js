@@ -6759,7 +6759,7 @@ console.log(code,'code2222')
       
           
          
-          InvoiceFile.find({invoiceNumberText:code},function(err,docs){
+          InvoiceFile.find({invoiceNumber:code},function(err,docs){
          if(docs == undefined){
            res.redirect('/')
          }else

@@ -78,10 +78,10 @@ console.log(id,'vcv')
                     
                 },
                 type: 'POST',
-                url: "./clerk/autoInvoiceX",
+                url: "/clerk/autoInvoiceX",
                 success: function(data) {
                
-                
+                console.log(data,'datababa')
                 
                  $("#fullname").val(data.studentName)
                  $("#email").val(data.studentEmail)
