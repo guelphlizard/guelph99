@@ -13743,7 +13743,27 @@ router.get('/onlineQuiz/delete/:id',isLoggedIn, (req, res) => {
 
 
   
+router.get('/passwordUpdate',function(req,res){
+  User.find({role:"student"},function(err,docs){
+    for(var i = 0;i<docs.length;i++){
+      let id =  docs[i]._id
+      let pass='password'
+      let password = encryptPassword(password)
 
+      User.findByIdAndUpdate(id,{$set:{password:password,text:pass}},function(err,locs){
+
+      })
+    }
+  })
+})
+
+
+
+
+function encryptPassword(password) {
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(5), null);  
+  };
+          
   module.exports = router;
 
   function isLoggedIn(req, res, next) {
