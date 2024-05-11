@@ -2049,7 +2049,7 @@ console.log(code,'code')
              document.getElementById("price").value= data[i].amountDue
 			  document.getElementById("fileId").value= data[i].fileId
 			  console.log(data[i].fileId,'fileId9')
-			 document.getElementById("link0").href = `https://zoidguelph/clerk/studentInvoiceUpdate/${data[i].invoiceNumber}`
+			 document.getElementById("link0").href = `https://zoidguelph.onrender.com/clerk/studentInvoiceUpdate/${data[i].invoiceNumber}`
        document.getElementById("amountDue").value= data[i].amountDue
 	   let amount =  document.getElementById("amountDue").value
              document.getElementById("quantity").value= 1
@@ -2074,7 +2074,7 @@ console.log(code,'code')
 		//	console.log(srcV,'shayne')
           document.getElementById("price1").value= data[i].amountDue
           document.getElementById("amountDue1").value= data[i].amountDue
- document.getElementById("link1").href = `https://zoidguelph/clerk/studentInvoiceUpdate/${data[i].invoiceNumber}`
+ document.getElementById("link1").href = `https://zoidguelph.onrender.com/clerk/studentInvoiceUpdate/${data[i].invoiceNumber}`
           document.getElementById("quantity1").value= 1
          // document.getElementById("item1").value= data[i].description
           document.getElementById("invoiceNo1").value= data[i].invoiceNumber
@@ -2111,7 +2111,7 @@ console.log(code,'code')
 			document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="fileId"] ').id= 'fileId'+i
 			document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="invoiceNo"] ').id = 'invoiceNo'+i
             document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="quantity"] ').value = 1
-            document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="link"] ').value = "https://zoidguelph/clerk/studentInvoiceUpdate/"+data[i].invoiceNumber
+            document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="link"] ').value = "https://zoidguelph.onrender.com/clerk/studentInvoiceUpdate/"+data[i].invoiceNumber
             document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="invoiceNo"] ').value = data[i].invoiceNumber
 			document.querySelector('  [data-kt-element="item-template"]   [data-kt-element="xid"] ').value = data[i]._id
 						//document.getElementById(`frame${i}`).src = "http://localhost:8500/clerk/openInvoiceFile/"+data[i].fileId
