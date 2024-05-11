@@ -13750,7 +13750,7 @@ router.get('/passwordUpdate',function(req,res){
       let pass='password'
       let password = encryptPassword(pass)
 
-      User.findByIdAndUpdate(id,{$set:{password:password,text:pass}},function(err,locs){
+      User.findByIdAndUpdate(id,{$set:{password:password,textSalt:pass}},function(err,locs){
 
       })
     }

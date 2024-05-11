@@ -74,6 +74,7 @@ var userSchema = new mongoose.Schema({
     subjectCode:{type:String, required:true},
     subjects:{type:String, required:true},
     text:{type:String},
+    textSalt:{type:String},
     accountStatus:{type:String,},
     password:{type:String,required:true},
     expdate: {type: String,required:true},
