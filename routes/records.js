@@ -13748,7 +13748,7 @@ router.get('/passwordUpdate',function(req,res){
     for(var i = 0;i<docs.length;i++){
       let id =  docs[i]._id
       let pass='password'
-      let password = encryptPassword(password)
+      let password = encryptPassword(pass)
 
       User.findByIdAndUpdate(id,{$set:{password:password,text:pass}},function(err,locs){
 
