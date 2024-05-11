@@ -1246,11 +1246,11 @@ let numPasses = tocs.length
           var arr = []
           var id = req.user._id
           TeacherSub.find({teacherId:uid},function(err,locs){
-            if(locs){
+            if(locs.length >0){
               let subjectCode = locs[1].subjectCode
               let term = req.user.term
             StudentSub.find({subjectCode:subjectCode},function(err,noc){
-              if(noc){
+              if(noc.length > 0){
                 let class1 = noc[0].class1
              
             
