@@ -1152,14 +1152,7 @@
 													</div>
 													</div>
 
-                                                 {{# if this.file}}
-													<div class="d-flex flex-wrap mb-5">
-													<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 mb-3">
-														<a href="/student/downloadAssgtFile/{{this.fileId}}" class="fs-6 text-gray-800 fw-bolder">Download File</a>
-														<!--<div class="fw-bold text-gray-400">{{this.teacher}}</div>-->
-													</div>
-													</div>
-                                               {{/if}}
+                                           
 											
 												<!--begin::Progress--
 												<div class="h-4px w-100 bg-light mb-5" data-bs-toggle="tooltip" title="This project 50% completed">
@@ -1192,6 +1185,14 @@
 									</div>
 									<!--end::Col-->
 									<!--begin::Col-->
+									      {{#if this.file}}
+													<div class="d-flex flex-wrap mb-5">
+													<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 mb-3">
+														<a href="/student/downloadAssgtFile/{{this.fileId}}" class="fs-6 text-gray-800 fw-bolder">Download File</a>
+														<!--<div class="fw-bold text-gray-400">{{this.teacher}}</div>-->
+													</div>
+													</div>
+                                               {{/if}}
 								
 									{{/each}}
 									<!--end::Col-->
