@@ -283,7 +283,7 @@ Test.find({type2:'online quiz',term:term,year:year,status2:"active"},function(er
       pendingQuiz = tocs.length
     
     
-      StudentDB.findByIdAndUpdate(idn,{$set:{subjects:subjects,pendingAssignments:pendingAssignments,pendingQuiz:pendingQuiz}},function(err,kocs){
+      StudentDB.findByIdAndUpdate(idn,{$set:{subjects:subjects,pendingAssignments:pendingAssignments2,pendingQuiz:pendingQuiz}},function(err,kocs){
     
       })
     })
