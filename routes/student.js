@@ -2648,10 +2648,10 @@ var year = m.format('YYYY')
 
                 router.get('/assignmentsFiles',isLoggedIn,student,function(req,res){
                   var m = moment()
-var year = m.format('YYYY')
+                  var year = m.format('YYYY')
                   var uid = req.user.uid
                   var class1= req.user.class1
-               const arr2= []
+                  const arr2= []
 
                   var pro = req.user
 
