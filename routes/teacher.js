@@ -4088,6 +4088,7 @@ router.post('/assignAttach',upload.single('file'),isLoggedIn,teacher, function(r
   var m2 = moment()
   var mformat = m2.format('L')
  var fileId = req.file.id
+
   var m = moment(day)
   var displayFormat = m.format('MMMM Do YYYY')
   var dateValueOf = m2.valueOf()
@@ -4239,20 +4240,20 @@ console.log(filename,'filename')
 
 
       
-/*StudentSub.find({subjectCode:subjectCode},function(err,docs){
+StudentSub.find({subjectCode:subjectCode},function(err,docs){
 for(var i = 0;i<docs.length;i++){
 let studentId = docs[i].studentId
 let studentName = docs[i].studentName
-let photo = docs[i].photo*/
+let photo = docs[i].photo
 
 
 
 
-/*
+
         var lesson = new TestX();
     
    
-        lesson.question = question;
+        lesson.question = 'Assignment File';
         lesson.uid = studentId
         lesson.fullname = studentName
         lesson.mark = 0;
@@ -4278,7 +4279,8 @@ let photo = docs[i].photo*/
         lesson.year = year
         lesson.grade = grade
         lesson.assignmentId = tesn._id
-        lesson.filename = 'null'
+        lesson.filename = filename
+        lesson.fileId = fileId
         lesson.mformatS = 'null'
         lesson.dateValueS = 0
         lesson.displayFormatS = 'null'
@@ -4295,32 +4297,21 @@ let photo = docs[i].photo*/
         lesson.type2 = 'online assignment'
         lesson.type3 = 'class'
         lesson.status3 = 'null'
-        lesson.companyId = companyId
+       
      
         
     
       lesson.save()
       .then(less =>{
-       /* Room.find({companyId:companyId},(err, wocs) => {
-          Class1.find({companyId:companyId},function(err,focs){
-            arr=focs
-          arr1 = wocs
-        req.session.message = {
-          type:'success',
-          message:'Lesson Added Successfully'
-        }     
        
-res.render('lesson/add-lesson',{message:req.session.message,fullname:fullname, teacherId:teacherID,arr:arr, arr1:arr1,pro:pro})
-      })
-    })*/
        
 
-     /* })*/
+     })
 
-   /* }
+   }
 
 
-  })*/
+  })
       
     })
     

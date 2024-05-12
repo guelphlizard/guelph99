@@ -2750,7 +2750,6 @@ var year = m.format('YYYY')
    
       res.render('students/uploads',{id:id,successMsg: successMsg,noMessages: !successMsg,pro:pro})
 
-  
 })
 
 router.post('/assignments/:id',upload.single('file'),isLoggedIn,function(req,res){
