@@ -2757,11 +2757,12 @@ router.post('/assignments/:id',upload.single('file'),isLoggedIn,function(req,res
   var id = req.params.id
   var m = moment()
   var filename = req.file.filename;
+  var fileId = req.file.fileId
   var mformat = m.format("L")
   var displayFormat = m.format('MMMM Do YYYY')
   var dateValueOf = m.valueOf()
 
- TestX.findByIdAndUpdate(id,{$set:{filename:filename,dateValueS:dateValueOf,displayFormatS:displayFormat,submissionStatus:'submitted'}},function(err,docs){
+ TestX.findByIdAndUpdate(id,{$set:{filename:filename,fileId:fileId,dateValueS:dateValueOf,displayFormatS:displayFormat,submissionStatus:'submitted'}},function(err,docs){
 
   })
 
