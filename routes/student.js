@@ -2757,7 +2757,7 @@ router.post('/assignments/:id',upload.single('file'),isLoggedIn,function(req,res
   var id = req.params.id
   var m = moment()
   var filename = req.file.filename;
-  var fileId = req.file.fileId
+  var fileId = req.file.id
   var mformat = m.format("L")
   var displayFormat = m.format('MMMM Do YYYY')
   var dateValueOf = m.valueOf()
