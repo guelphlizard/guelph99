@@ -4321,7 +4321,7 @@ let photo = docs[i].photo
   }
   else{
   
-      Class1.find({companyId:companyId},function(err,focs){
+      Class1.find(function(err,focs){
         arr = focs
  
     req.session.message = {
