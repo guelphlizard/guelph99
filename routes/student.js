@@ -2639,7 +2639,7 @@ var year = m.format('YYYY')
                 router.get('/assignments',isLoggedIn,student,function(req,res){
                   var uid = req.user.uid
                   var pro = req.user
-                 TestX.find({uid:uid,type2:'online assignment',status3:'null'},function(err,docs){
+                 TestX.find({uid:uid,type2:'online assignment',submissionStatus:"null",status3:'null'},function(err,docs){
                     res.render('students/assgt',{listX:docs,pro:pro})
                   })
                 
