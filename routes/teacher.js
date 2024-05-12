@@ -4297,6 +4297,7 @@ let photo = docs[i].photo
         lesson.type2 = 'online assignment'
         lesson.type3 = 'class'
         lesson.status3 = 'null'
+        lesson.file = true
        
      
         
