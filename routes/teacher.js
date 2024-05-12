@@ -3898,6 +3898,7 @@ let photo = docs[i].photo
         lesson.grade = grade
         lesson.assignmentId = tesn._id
         lesson.filename = 'null'
+        lesson.fileId = 'null'
         lesson.mformatS = 'null'
         lesson.dateValueS = 0
         lesson.displayFormatS = 'null'
