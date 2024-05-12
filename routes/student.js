@@ -2702,6 +2702,32 @@ var year = m.format('YYYY')
 
                 })
 
+
+                router.get('/downloadAssgtFile/:id',(req,res)=>{
+                  var fileId = req.params.id
+                  
+                
+                
+                //const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+                const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+                gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+                
+                  console.log(files[0].filename,'files9')
+                let filename = files[0].filename
+                let contentType = files[0].contentType
+                
+                
+                    res.set('Content-disposition', `attachment; filename="${filename}"`);
+                    res.set('Content-Type', contentType);
+                    bucket.openDownloadStreamByName(filename).pipe(res);
+                  })
+                 //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+                })
+                
+
+
+
+
 /*
                 router.get('/onlineQuiz',isLoggedIn,function(req,res){
                   var uid = req.user.uid
