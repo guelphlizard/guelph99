@@ -1151,6 +1151,10 @@
 														<div class="fw-bold text-gray-400">{{this.teacher}}</div>
 													</div>
 													</div>
+
+													{{# if this.question == 'Assignment File'}}
+                                                      <a href="">Download Assignment</a>
+													{{/if}}
 												<!--begin::Progress--
 												<div class="h-4px w-100 bg-light mb-5" data-bs-toggle="tooltip" title="This project 50% completed">
 													<div class="bg-primary rounded h-4px" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
