@@ -11339,18 +11339,18 @@ router.get('/importInvoices',isLoggedIn, function(req,res){
            let studentId = record.studentId
            let invoiceNumber = record.invoiceNumber
            let date = record.date
-           let datePaid = record.datePaid
+         //  let datePaid = record.datePaid
            let status = record.status
            let amountPaid = record.amountPaid
            let invoiceTotal = record.invoiceTotal
            let studentBalance = record.studentBalance
            let term = record.term
-           let id2 = record.id2
+          /* let id2 = record.id2
            let email = record.email
            let address = record.address
            let mobile = record.mobile
            let class1 = record.class1
-           let name = record.name;
+           let name = record.name;*/
            let type = record.invoice
 
           let dateX = new Date(Date.UTC(0, 0, date - 1));
@@ -11416,6 +11416,13 @@ else
            }
            else{
 
+User.find({uid:studentId},function(err,docs){
+let id2 = docs[0]._id
+let email = docs[0].email
+let address = docs[0].address
+let mobile = docs[0].mobile
+let class1 = docs[0].class1
+let studentName = docs[0].fullname
 
 
 
@@ -11423,6 +11430,7 @@ else
    
            repo.studentName = studentName;
            repo.studentId = studentId
+           repo.studentId2 = id2
            repo.studentEmail = email
            repo.studentAddress = address
            repo.studentMobile = mobile
@@ -11446,7 +11454,7 @@ else
            repo.invoiceNumber = invoiceNumber
            repo.receiptNumber = 0
            repo.status = status
-           repo.datePaid = datePaid
+           repo.datePaid = "null"
            repo.dueDate = mformat
            repo.dateValue = dateValue
            repo.studentBalance = studentBalance
@@ -11458,6 +11466,8 @@ else
              //console.log("Done creating pdf",uid)
          
            })
+
+          })
           }
 
            })
@@ -11574,7 +11584,7 @@ router.get('/importReceipts',isLoggedIn, function(req,res){
            let datePaid = record.datePaid
            let status = record.status
            let amountPaid = record.amountPaid
-           let totalAmountOwing = record.totalAmountOwing
+          // let totalAmountOwing = record.totalAmountOwing
            let studentBalance = record.studentBalance
            let term = record.term
            let id2 = record.id2
@@ -11632,15 +11642,23 @@ if (errors) {
 
 
 
-
+            User.find({uid:studentId},function(err,docs){
+              let id2 = docs[0]._id
+              let email = docs[0].email
+              let address = docs[0].address
+              let mobile = docs[0].mobile
+              let class1 = docs[0].class1
+              let studentName = docs[0].fullname
           
   var repo = new InvoiceFile();
    
   repo.studentName = studentName;
   repo.studentId = studentId
+  repo.studentId2 = id2
   repo.studentEmail = email
   repo.studentAddress = address
   repo.studentMobile = mobile
+  repo.class1 = class1
 
 
   repo.fileId = "null"
@@ -11656,7 +11674,7 @@ if (errors) {
   repo.type2 = 'old'
   repo.amountPaid= amountPaid
   repo.typeAmount = amountPaid
-  repo.amountDue =totalAmountOwing
+  repo.amountDue =0
   repo.remainingBalance = totalAmountOwing
   repo.month = month
  
@@ -11670,6 +11688,7 @@ if (errors) {
              //console.log("Done creating pdf",uid)
          
            })
+          })
           }
 
            })
