@@ -11395,7 +11395,9 @@ if (errors) {
 
 }
 
-else
+
+
+     /*else
 
 
            {
@@ -11413,7 +11415,7 @@ else
  
                  //res.redirect('/records/import')
                
-           }
+           }*/
            else{
 
 User.find({uid:studentId},function(err,docs){
@@ -11467,8 +11469,8 @@ let studentName = docs[0].fullname
          
            })
 
-          })
-          }
+         /* })
+          }*/
 
            })
          }
