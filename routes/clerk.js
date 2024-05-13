@@ -11335,7 +11335,7 @@ router.get('/importInvoices',isLoggedIn, function(req,res){
       
       
      
-           let studentName = record.studentName
+          // let studentName = record.studentName
            let studentId = record.studentId
            let invoiceNumber = record.invoiceNumber
            let date = record.date
@@ -11351,7 +11351,7 @@ router.get('/importInvoices',isLoggedIn, function(req,res){
            let mobile = record.mobile
            let class1 = record.class1
            let name = record.name;*/
-           let type = record.invoice
+           let type = "Invoice"
 
           let dateX = new Date(Date.UTC(0, 0, date - 1));
            console.log(dateX,'date1')
@@ -11364,7 +11364,7 @@ router.get('/importInvoices',isLoggedIn, function(req,res){
            let month = m.format('MMMM')
            let remainingBalance = invoiceTotal - amountPaid
            let css
-
+console.log(dateValue,year,'dateValue,year')
            if(status == 'paid'){
               css = "success"
            }else{
@@ -11443,7 +11443,7 @@ let studentName = docs[0].fullname
            repo.year = year;
            repo.term = term
            repo.date = mformat
-           repo.type = type
+           repo.type = "Invoice"
            repo.css = css
            repo.type1 = 'single'
            repo.type2 = 'old'
@@ -11504,7 +11504,23 @@ let studentName = docs[0].fullname
  
  })
   
+
+ router.get('/deleteInvo',function(req,res){
+res.render('acc2/uid')
+ })
   
+ router.post('/deleteInvo',function(req,res){
+
+  var uid = req.body.uid
+  InvoiceFile.find({studentId:uid,type2:"old"},function(err,docs){
+for(var i = 0; i< docs.length;i++){
+  let id = docs[i]._id
+  InvoiceFile.findByIdAndRemove(id,function(err,locs){
+
+  })
+}
+  })
+ })
 /////////////////
  
 router.get('/importReceipts',isLoggedIn, function(req,res){
