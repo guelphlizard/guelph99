@@ -11675,7 +11675,7 @@ if (errors) {
   repo.amountPaid= amountPaid
   repo.typeAmount = amountPaid
   repo.amountDue =0
-  repo.remainingBalance = totalAmountOwing
+  repo.remainingBalance = 0
   repo.month = month
  
   repo.receiptNumber = receiptNumber
