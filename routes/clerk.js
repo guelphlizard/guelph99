@@ -11040,7 +11040,7 @@ User.findById(id,function(err,doc){
     
     
     //TestX.find({year:year,uid:uid},function(err,vocs) {
-    InvoiceFile.find({studentId:code}).lean().sort({dateValue:1}).then(vocs=>{
+    InvoiceFile.find({studentId:code}).lean().sort({dateValue:-1}).then(vocs=>{
     console.log(vocs.length,'vocs')
     
     for(var x = 0;x<vocs.length;x++){
