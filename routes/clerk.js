@@ -11040,7 +11040,7 @@ User.findById(id,function(err,doc){
     
     
     //TestX.find({year:year,uid:uid},function(err,vocs) {
-    InvoiceFile.find({studentId:code}).lean().sort({dateValue:-1}).then(vocs=>{
+    InvoiceFile.find({studentId:code}).lean().sort({dateValue:1}).then(vocs=>{
     console.log(vocs.length,'vocs')
     
     for(var x = 0;x<vocs.length;x++){
@@ -11171,8 +11171,8 @@ let filename = 'statement'+'_'+studentName+'.pdf'
   //console.log(form)
 await Axios({
     method: "POST",
-   url: 'https://portal.steuritinternationalschool.org/clerk/uploadStatement',
-     //url: 'http://localhost:9500/clerk/uploadStatement',
+   //url: 'https://portal.steuritinternationalschool.org/clerk/uploadStatement',
+     url: 'http://localhost:9500/clerk/uploadStatement',
     headers: {
       "Content-Type": "multipart/form-data"  
     },
