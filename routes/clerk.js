@@ -11172,7 +11172,7 @@ let filename = 'statement'+'_'+studentName+'.pdf'
 await Axios({
     method: "POST",
    // url: 'https://portal.steuritinternationalschool.org/clerk/uploadStatement',
-     url: 'http://localhost:8500/clerk/uploadStatement',
+     url: 'http://localhost:9500/clerk/uploadStatement',
     headers: {
       "Content-Type": "multipart/form-data"  
     },
