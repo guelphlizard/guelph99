@@ -168,7 +168,7 @@ body {
        
     </div>
     <div class="rightpane">
-      <h1>INVOICE</h1>
+      <h1>STATEMENT</h1>
     </div>
   </div>
 </div>
@@ -203,7 +203,7 @@ body {
         <div class="column1"  >
     
     
-    <table border="1"  style="height: 80px;margin-bottom:10px;">
+    <table border="1"  style="height: 90px;margin-bottom:10px;">
         <tr >
             <td style="text-align:center;height:5px;">Date</td>
       
@@ -232,7 +232,7 @@ body {
       
     
         <tr >
-            <th  style="text-align:center;width: 10%;" >
+            <th  style="text-align:center;width: 20%;" >
              Date
             </th>
 
@@ -262,21 +262,21 @@ body {
        
           
            
-            <td style="text-align:left">
-            {{this.code}}
+                <td style="text-align:center; border:0cm;">
+            {{this.date}}
             </td>
           
        
-            <td style="text-align: right; ">
-             {{this.amountBefore}}.00
+            <td style="text-align: left; ">
+             {{this.name}}
             </td>
 
-              <!-- <td style="text-align: right; ">
-             {{this.discount}}
-            </td>-->
+               <td style="text-align: right; ">
+             {{this.typeAmount}}
+            </td>
 
             <td style="text-align: right;">
-          {{this.total}}.00
+          {{this.studentBalance}}
              </td>
         </tr>
         {{/each}}

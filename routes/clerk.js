@@ -11040,8 +11040,8 @@ User.findById(id,function(err,doc){
     
     
     //TestX.find({year:year,uid:uid},function(err,vocs) {
-    InvoiceFile.find({studentId:code,statement:"true"}).lean().sort({dateValue:1}).then(vocs=>{
-    
+    InvoiceFile.find({studentId:code}).lean().sort({dateValue:1}).then(vocs=>{
+    console.log(vocs.length,'vocs')
     
     for(var x = 0;x<vocs.length;x++){
     let size = vocs.length - 1
@@ -11248,6 +11248,19 @@ res.redirect('/clerk/openStatement/'+id)
       })
      //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
     })
+
+    /*router.get('/openStatement/:id',(req,res)=>{
+      var fileId = req.params.id
+        const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+        gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+        
+      
+          const readStream = bucket.openDownloadStream(files[0]._id);
+              readStream.pipe(res);
+      
+        })
+       //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+      })*/
 
 
 
