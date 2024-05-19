@@ -11265,9 +11265,44 @@ res.redirect('/clerk/openStatement/'+id)
 
 
 
+router.get('/dateUpdate',function(req,res){
+InvoiceFile.find({statement:"true"},function(err,docs){
+  for(var i = 0;i<docs.length;i++){
+    let date = docs[i].date
+    let id = docs[i]._id
+    let m = moment(date)
+          
+    console.log(m,'date')
+    let dateValue = m.valueOf()
+
+    InvoiceFile.findByIdAndUpdate(id,{$set:{dateValue:dateValue}},function(err,locs){
+
+    })
+ 
+  }
+})
+
+})
 
 
 
+
+router.get('/nameUpdate',function(req,res){
+InvoiceFile.find({statement:"true",type:"Invoice"},function(err,docs){
+  for(var i = 0;i<docs.length;i++){
+    let date = docs[i].date
+    let id = docs[i]._id
+    let invoiceNumber = docs[i].invoiceNumber
+    let name = "INV #"+invoiceNumber+" "+"Due"+" "+date;
+
+    InvoiceFile.findByIdAndUpdate(id,{$set:{name:name}},function(err,locs){
+      
+    })
+ 
+  }
+})
+
+})
 
   
   
