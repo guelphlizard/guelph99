@@ -3859,6 +3859,7 @@ TeacherSub.findOne({'subjectCode':subjectCode})
 
       
 StudentSub.find({subjectCode:subjectCode},function(err,docs){
+ 
 for(var i = 0;i<docs.length;i++){
 let studentId = docs[i].studentId
 let studentName = docs[i].studentName
@@ -8802,7 +8803,7 @@ console.log(arr,'arr333')
 router.get('/typeFolderClass/:id',isLoggedIn,teacher,function(req,res){
   var id = req.params.id
   var term = req.user.term
-  var year = 2023
+  var year = 2024
   var pro = req.user
   StudentSub.findById(id,function(err,doc){
        if(doc){
@@ -8834,6 +8835,8 @@ router.get('/typeFolderClass/:id',isLoggedIn,teacher,function(req,res){
   
   })
 
+
+ 
 
   router.post('/typeFolderClass/:id',isLoggedIn,teacher,function(req,res){
     var pro =req.user
@@ -8904,6 +8907,15 @@ router.get('/typeFolderClass/:id',isLoggedIn,teacher,function(req,res){
     })
   })
   
+  router.get('/openAssignmentFile/:id',isLoggedIn,function(req,res){
+    var id = req.params.id
+    var pro = req.user
+    Test.findById(id,function(err,loc){
+     
+      res.render('students/openAssgt',{listX:loc,pro:pro})
+    })
+  
+  })
 
 
   router.get('/classAssignmentFile/:id',isLoggedIn,teacher,function(req,res){

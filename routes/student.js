@@ -248,7 +248,7 @@ StudentSub.find({studentId:uid},function(err,nocs){
   let pendingQuiz
   TestX.find({uid:uid,type2:'online assignment',submissionStatus:'pending',status3:"null",term:term,year:year},function(err,locs){
 pendingAssignments2 = locs.length
-console.log(pendingAssignments,'pending')
+console.log(pendingAssignments2,'pending1')
 Test.find({type2:'online assignment attached',term:term,year:year,status3:"null"},function(err,kocs){
   pendingAssignments = locs.length + kocs.length
 Test.find({type2:'online quiz',term:term,year:year,status2:"active"},function(err,tocs){
@@ -275,7 +275,7 @@ Test.find({type2:'online quiz',term:term,year:year,status2:"active"},function(er
       let pendingQuiz
       TestX.find({uid:uid,type2:'online assignment',submissionStatus:'pending',status3:"null",term:term,year:year},function(err,locs){
     pendingAssignments2 = locs.length
-    console.log(pendingAssignments2,'pending')
+    console.log(pendingAssignments2,'pending2')
     Test.find({type2:'online assignment attached',term:term,year:year,status3:"null"},function(err,kocs){
       pendingAssignments = locs.length + kocs.length
       console.log(kocs,"kocs")

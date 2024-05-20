@@ -1046,7 +1046,7 @@
 								<!--begin::Page title-->
 								<div data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_content_container', 'lg': '#kt_toolbar_container'}" class="page-title d-flex align-items-center flex-wrap me-3 mb-5 mb-lg-0">
 									<!--begin::Title-->
-									<h1 class="d-flex align-items-center text-dark fw-bolder fs-3 my-1">Pending Online Assignments</h1>
+									<h1 class="d-flex align-items-center text-dark fw-bolder fs-3 my-1">  Assignment</h1>
 									<!--end::Title-->
 									<!--begin::Separator-->
 									<span class="h-20px border-gray-300 border-start mx-4"></span>
@@ -1086,7 +1086,7 @@
 								<!--begin::Toolbar-->
 								<div class="d-flex flex-wrap flex-stack mb-6">
 									<!--begin::Heading-->
-									<h3 class="fw-bolder my-2">Assignments
+									<h3 class="fw-bolder my-2">Assignment
 									<span class="fs-6 text-gray-400 fw-bold ms-1">Active</span></h3>
 									<!--end::Heading-->
 									<!--begin::Actions-->
@@ -1096,18 +1096,18 @@
 								<!--end::Toolbar-->
 								<!--begin::Row-->
 								<div class="row g-6 g-xl-9">
-											 {{#each listX}}
+								
 									<!--begin::Col-->
 									<div class="col-md-6 col-xl-4">
 										<!--begin::Card-->
-										<a href="/student/assignments/{{this._id}}" class="card border-hover-primary">
+										<a href="#" class="card border-hover-primary">
 											<!--begin::Card header-->
 											<div class="card-header border-0 pt-9">
 												<!--begin::Card Title-->
 												<div class="card-title m-0">
 													<!--begin::Avatar-->
 													<div class="symbol symbol-50px w-50px bg-light">
-														<img src="{{this.icon}}" alt="image" class="p-3" />
+														<img src="{{listX.icon}}" alt="image" class="p-3" />
 													</div>
 													<!--end::Avatar-->
 												</div>
@@ -1122,21 +1122,21 @@
 											<!--begin:: Card body-->
 											<div class="card-body p-9">
 												<!--begin::Name-->
-												<div class="fs-3 fw-bolder text-dark">{{this.question}}  <b> [{{this.possibleMark}}]</b></div>
+												<div class="fs-3 fw-bolder text-dark">{{listX.question}}  <b> [{{listX.possibleMark}}]</b></div>
 												<!--end::Name-->
 												<!--begin::Description-->
-												<p class="text-gray-400 fw-bold fs-5 mt-1 mb-7">{{this.subect}}</p>
+												<p class="text-gray-400 fw-bold fs-5 mt-1 mb-7">{{listX.subect}}</p>
 												<!--end::Description-->
 												<!--begin::Info-->
 												<div class="d-flex flex-wrap mb-5">
 													<!--begin::Due-->
 													<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-7 mb-3">
 														<div class="fs-6 text-gray-800 fw-bolder">Deadline</div>
-														<div class="fw-bold text-gray-400">{{this.displayFormat}}</div>
+														<div class="fw-bold text-gray-400">{{listX.displayFormat}}</div>
 													</div>
 													<!--end::Due-->
 													<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 mb-3">
-														<div class="fs-6 text-gray-800 fw-bolder">{{this.subject}}</div>
+														<div class="fs-6 text-gray-800 fw-bolder">{{listX.subject}}</div>
 														
 													</div>
 													<!--begin::Budget-->
@@ -1148,7 +1148,7 @@
 													<div class="d-flex flex-wrap mb-5">
 													<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 mb-3">
 														<div class="fs-6 text-gray-800 fw-bolder">Teacher</div>
-														<div class="fw-bold text-gray-400">{{this.teacher}}</div>
+														<div class="fw-bold text-gray-400">{{listX.teacher}}</div>
 													</div>
 													</div>
 
@@ -1180,10 +1180,10 @@
 												<!--end::Users-->
 											</div>
 											<!--end:: Card body-->
-											    {{#if this.file}}
+											    {{#if listX.file}}
 													<div class="d-flex flex-wrap mb-5">
 													<div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 mb-3">
-														<a href="/student/downloadAssgtFile/{{this.fileId}}" class="fs-6 text-gray-800 fw-bolder">Download File</a>
+														<a href="/student/downloadAssgtFile/{{listX.fileId}}" class="fs-6 text-gray-800 fw-bolder">Download File</a>
 														<!--<div class="fw-bold text-gray-400">{{this.teacher}}</div>-->
 													</div>
 													</div>
@@ -1195,7 +1195,7 @@
 									</div>
 									<!--end::Col-->
 									<!--begin::Col-->
-									  	{{/each}}
+									 
 									<!--end::Col-->
 								</div>
 								<!--end::Row-->

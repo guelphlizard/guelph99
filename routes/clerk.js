@@ -5652,6 +5652,7 @@ else{
     var pro = req.user
     var m = moment()
     var month = m.format('MMMM')
+    let dateValue = m.valueOf()
     var year = m.format('YYYY')
     var mformat = m.format('L')
     var companyAddress = req.user.companyAddress
@@ -5771,6 +5772,7 @@ receipt.month= month;
 receipt.filename = receiptNumber+'_'+studentName+'.pdf';
 receipt.year = year;
 receipt.date = date;
+receipt.dateValue = dateValue;
 receipt.type = type;
 receipt.type1 = 'single';
 receipt.name = "PMT";
@@ -5827,6 +5829,7 @@ receipt.save()
       receipt.filename = receiptNumber+'_'+studentName+'.pdf';
       receipt.year = year;
       receipt.date = date;
+      receipt.dateValue = dateValue;
       receipt.type = type;
       receipt.type1 = 'single';
       receipt.name = "PMT";
@@ -5909,6 +5912,7 @@ receipt.save()
       receipt.filename = receiptNumber+'_'+studentName+'.pdf';
       receipt.year = year;
       receipt.date = date;
+      receipt.dateValue = dateValue;
       receipt.type = type;
       receipt.type1 = 'single';
       receipt.name = "PMT";
@@ -5963,6 +5967,7 @@ receipt.save()
             receipt.filename = receiptNumber+'_'+studentName+'.pdf';
             receipt.year = year;
             receipt.date = date;
+            receipt.dateValue = dateValue;
             receipt.type = type;
             receipt.type1 = 'single';
             receipt.name = "PMT";
@@ -7580,6 +7585,7 @@ router.get('/loopTest',function(res,req){
   router.get('/invoiceSubGeneration',isLoggedIn,function(req,res){
   
     var m = moment()
+    let dateValue = m.valueOf()
     var year = req.user.hostelYear
 var grade = req.user.invoiceGrade
 //var term = req.user.invoiceTerm
@@ -7692,6 +7698,7 @@ var grade = req.user.invoiceGrade
   repo.year = year;
   repo.term = term
   repo.date = date
+  repo.dateValue = dateValue
   repo.type = type
   repo.css = 'danger'
   repo.type1 = 'batch'
@@ -8205,6 +8212,7 @@ if(hods[0].subtotal == 0){
   var m = moment()
   var mformat = m.format('L')
   var month = m.format('MMMM')
+  let dateValue = m.valueOf()
   var year = m.format('YYYY')
   var code = req.user.invoNumber
   var uid = req.user.invoNumber
@@ -8337,6 +8345,7 @@ let filename = invoiceNumber+'_'+studentName+'.pdf'
   repo.invoiceNumber = invoiceNumber
   repo.invoiceNumberText = invoiceNumber
   repo.receiptNumber = 0
+  repo.dateValue = dateValue
   repo.name = "INV #"+invoiceNumber+" "+"Due"+" "+date;
   repo.status = "unpaid"
   repo.datePaid = "null"
@@ -9056,6 +9065,7 @@ if( arrSingleUpdate[code].length > 0 && arrSingleUpdate[code].find(value => valu
 router.get('/invoiceSingleGeneration2Update',isLoggedIn,function(req,res){
 console.log(arrSingleUpdate,'arrSingleUpdate')
 var m = moment()
+let dateValue = m.valueOf()
 var mformat = m.format('L')
 var month = m.format('MMMM')
 var year = m.format('YYYY')
@@ -9177,6 +9187,7 @@ repo.invoiceCode = invoiceCode
 repo.invoiceNumber = invoiceNumber
 repo.invoiceNumberText = invoiceNumber
 repo.receiptNumber = 0
+repo.receiptNumber = dateValue
 repo.statement = "true"
 repo.name = "INV #"+invoiceNumber+" "+"Due"+" "+date;
 repo.status = "unpaid"
@@ -9427,6 +9438,7 @@ router.post('/invoice/:id',isLoggedIn,function(req,res){
   var month = m.format('MMMM')
   var year = m.format('YYYY')
   var date = m.format('L')
+  let dateValue = m.valueOf()
   var term = req.user.term
   var studentName= req.body.clientName
   var studentEmail = req.body.clientEmail
@@ -9526,6 +9538,7 @@ receipt.month= month;
 receipt.filename = receiptNumber+'_'+studentName+'.pdf';
 receipt.year = year;
 receipt.date = date;
+receipt.dateValue = dateValue;
 receipt.type = type;
 receipt.type1 = 'single';
 receipt.name = "PMT";
@@ -9595,6 +9608,7 @@ receipt.save()
     receipt.typeAmount = amountX2
     receipt.remainingBalance = balance;
     receipt.datePaid = date;
+    receipt.dateValue = dateValue;
    
     receipt.invoiceAmountPaid=amount;
     receipt.invoiceAmountDue= balance;
