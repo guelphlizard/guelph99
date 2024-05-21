@@ -5744,7 +5744,7 @@ router.get('/batchExam',isLoggedIn,teacher,  function(req,res){
   var subject = req.user.subjects
   var subjectCode = req.user.subjectCode
   var grade = req.user.grade
-
+  var class1 =  req.user.class1
   
   
   
@@ -5754,7 +5754,7 @@ router.get('/batchExam',isLoggedIn,teacher,  function(req,res){
    var arr2 = zoc
   var arr1 = docs;  
   
-  res.render('exam/batchExam',{ arr1:arr1,arr2:arr2, user:user, pro:pro, subject:subject,subjectCode:subjectCode, grade:grade})
+  res.render('exam/batchExam',{ arr1:arr1,arr2:arr2,class1:class1, user:user, pro:pro, subject:subject,subjectCode:subjectCode, grade:grade})
   
   })
   })
@@ -5930,6 +5930,7 @@ test.question = 0;
 test.comments = "null"
 test.assignmentId = 'null'
 test.filename = 'null'
+test.fileId = 'null'
 test.mformatS = 'null'
 test.dateValueS = 0
 test.displayFormatS = 'null'
@@ -6197,7 +6198,7 @@ router.get('/attendanceBatch',isLoggedIn,teacher,  function(req,res){
   var subject = req.user.subjects
   var subjectCode = req.user.subjectCode
   var grade = req.user.grade
-
+  var class1 = req.user.class1
   
   
   
@@ -6207,7 +6208,7 @@ router.get('/attendanceBatch',isLoggedIn,teacher,  function(req,res){
    var arr2 = zoc
   var arr1 = docs;  
   
-  res.render('attendance/batchAtt',{ arr1:arr1,arr2:arr2, user:user, pro:pro, subject:subject,subjectCode:subjectCode, grade:grade,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+  res.render('attendance/batchAtt',{ arr1:arr1,arr2:arr2,class1:class1, user:user, pro:pro, subject:subject,subjectCode:subjectCode, grade:grade,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
   
   })
   })
