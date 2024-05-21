@@ -5670,6 +5670,7 @@ test.mformatD = 0
 test.question = 0;
 test.assignmentId = 'null'
 test.filename = 'null'
+test.fileId = 'null'
 test.mformatS = 'null'
 test.dateValueS = 0
 test.displayFormatS = 'null'
