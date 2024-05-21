@@ -5485,6 +5485,7 @@ router.get('/classWorkBatch',isLoggedIn,teacher,  function(req,res){
   var subjectCode = req.user.subjectCode
   var grade = req.user.grade
   var class1 = req.user.class1
+  var term = req.user.term
 
   
   
@@ -5495,7 +5496,7 @@ router.get('/classWorkBatch',isLoggedIn,teacher,  function(req,res){
    var arr2 = zoc
   var arr1 = docs;  
   
-  res.render('exam/batch',{ arr1:arr1,arr2:arr2,class1:class1, user:user, pro:pro, subject:subject,subjectCode:subjectCode, grade:grade})
+  res.render('exam/batch',{ arr1:arr1,arr2:arr2,class1:class1,term:term, user:user, pro:pro, subject:subject,subjectCode:subjectCode, grade:grade})
   
   })
   })
