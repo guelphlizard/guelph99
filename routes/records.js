@@ -3609,6 +3609,19 @@ router.get('/addStudent',isLoggedIn,  function(req,res){
                         
       })*/
       
+
+router.get('/termUpdate',function(req,res){
+  User.find(function(err,docs){
+    for(var i = 0;i<docs.length;i++){
+      let id = docs[i]._id
+    User.findByIdAndUpdate(id,{$set:{term:2}},function(err,locs){
+      
+    })
+    }
+  })
+})
+
+
   /////////////post2
   
   router.post('/addStudent',isLoggedIn,upload.single('file'),function(req, res, next) {
