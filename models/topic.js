@@ -10,6 +10,7 @@ subjectName:{type:String, required:true},
 year:{type:Number, required:true},
 grade:{type:Number, required:true},
 class1:{type:String, required:true},
+teacherId:{type:String, required:true},
 
 
 

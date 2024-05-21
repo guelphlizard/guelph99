@@ -8346,6 +8346,7 @@ router.post('/topics',isLoggedIn, function(req,res){
   book.name = name
   book.status =  'null'
   book.year = year
+  book.teacherId = teacherId
  
 
 
@@ -8433,6 +8434,7 @@ router.get('/saveTopics/',isLoggedIn, function(req,res){
  var receiver = req.user.fullname
  var code = req.params.id
  var uid = req.user._id
+ var teacherId = req.user.uid
 
 var m2 = moment()
 var wformat = m2.format('L')
@@ -8482,7 +8484,7 @@ let subjectCode = locs[i].subjectCode
   book.grade = hoc.grade
   book.name = topic
   book.class1 = class1
-
+  book.teacherId = teacherId
   book.year = year 
 
       
@@ -9687,7 +9689,8 @@ router.get('/viewTopics/',isLoggedIn, (req, res) => {
   var arr = []
   var id = req.params.id
   var arr = []
-  Topic.find({},(err, docs) => {
+  var uid = req.user.uid
+  Topic.find({teacherId:uid},(err, docs) => {
 
     if(docs){
 

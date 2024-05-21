@@ -12,7 +12,7 @@ teacherId:{type:String, required:true},
 grade:{type:Number, required:true},
 class1:{type:String, required:true},
 status:{type:String, required:true},
-
+teacherId:{type:String, required:true},
 companyId:{type:String},
 
 
