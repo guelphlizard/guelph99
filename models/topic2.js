@@ -9,7 +9,7 @@ subjectCode:{type:String, required:true},
 subjectName:{type:String, required:true},
 year:{type:Number, required:true},
 teacherId:{type:String, required:true},
-grade:{type:String, required:true},
+grade:{type:Number, required:true},
 class1:{type:String, required:true},
 status:{type:String, required:true},
 
