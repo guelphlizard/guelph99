@@ -4439,13 +4439,14 @@ router.get('/attachMaterial',isLoggedIn,teacher,function(req,res){
    var subjectCode = req.user.subjectCode
    var grade = req.user.grade
    var icon = req.user.icon
+   var class1 = req.user.class1
    Class1.find({}, function(err,docs){
      Topic.find({subjectCode:subjectCode},function(err,zoc){
    
     var arr2 = zoc
    var arr1 = docs;  
    
-   res.render('teacherExam/material',{ arr1:arr1,arr2:arr2, user:user,icon:icon, pro:pro, subject:subject,subjectCode:subjectCode, grade:grade,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+   res.render('teacherExam/material',{ arr1:arr1,arr2:arr2,class1:class1, user:user,icon:icon, pro:pro, subject:subject,subjectCode:subjectCode, grade:grade,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
    
    })
    })
