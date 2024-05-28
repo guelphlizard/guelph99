@@ -17,6 +17,8 @@ const RoomAllo =require('../models/roomAllocation')
 const RoomTransfer =require('../models/roomTransfer')
 const TopUp =require('../models/topUp')
 const Voucher =require('../models/voucher')
+const Year =require('../models/year')
+const Month =require('../models/month')
 const ClassV =require('../models/classV');
 const CodeV =require('../models/codev');
 const AlloCode =require('../models/alloCode');
@@ -79,7 +81,8 @@ var passport = require('passport')
 var moment = require('moment')
 var bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
-
+var Axios = require('axios')
+var FormData = require('form-data')
 const GridFsStorage = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
 const methodOverride = require('method-override');
@@ -105,7 +108,7 @@ var uploadX = multer({
   storage:storageX
 })
 
-const mongoURI = process.env.MONGO_URL ||'mongodb://0.0.0.0:27017/smsDB';
+const mongoURI = process.env.MONGO_URL ||'mongodb://0.0.0.0:27017/euritDB';
 
 const conn = mongoose.createConnection(mongoURI);
 
@@ -171,93 +174,211 @@ const storage = new GridFsStorage({
 const upload = multer({ storage })
 
 
-User.find({role:'student'},function(err,docs){
-  for(var i=0;i<docs.length;i++){
-    let uid = docs[i].uid
-     arr[uid]=[]
-  }
-})
-
-console.log('vvx')
-var m = moment()
-var month = m.format('MMMM')
-  var year = m.format('YYYY')
-console.log(month,'mmmmm')
-//var term = req.user.term
-User.find({role:"student"},function(err,docs){
-
-for(var i = 0; i<docs.length;i++){
-
-//console.log(docs[i].uid,'ccc')
-let uid = docs[i].uid
-//let uid = "SZ125"
-
-
-//TestX.find({year:year,uid:uid},function(err,vocs) {
-  TestX.find({year:year,month:month,uid:uid,type3:"class"}).lean().then(vocs=>{
-
-  
-for(var x = 0;x<vocs.length;x++){
-  //size = docs.length
-  let subject = vocs[x].subject
-   
-   if( arr[uid].length > 0 && arr[uid].find(value => value.subject == subject) ){
- 
-         arr[uid].find(value => value.subject == subject).percentage += vocs[x].percentage;
-         arr[uid].find(value => value.subject == subject).size++;
-         //console.log(arr,'arrX')
-        }
-        
-         
-        
-        
-        else{
-          arr[uid].push(vocs[x])
-          // console.log(arr,'push')
-          
-            //element.size = 0
-            /*if(arr[uid].find(value => value.subject == subject)){*/
-       
-             
-                   arr[uid].find(value => value.subject == subject).size++;
-
-
-     
-            /*}*/
-          //  console.log(arr,'ll'+uid)
-            //element.size = element.size + 1
-              
-          } 
-
-
-         /* arr[uid].forEach((element,index)=>{
-            if(element.size > 0) {
-              //console.log(element,'element')
-            
-              //element.percentage  = element.percentage / element.size
-
-              console.log(element.percentage, element.size,'drumless')
-              let num = Math.round(element.percentage)
-  num.toFixed(2)
-  element.percentage =num
-
-
-            }
-        
-          })*/
-
-         
-
-}
-        })
-        }
-      })
 
 /*})*/
 
-router.get('/weight',function(req,res){
-User.find({role:"student"},function(err,hocs){
-for(var i = 0;i<hocs.length;i++){
+
+
+
+
+  router.get('/alloStudentMonthlyBatch',isLoggedIn,  function(req,res){
+    var pro = req.user
+    var errorMsg = req.flash('danger')[0];
+    var successMsg = req.flash('success')[0];
+    res.render('records/alloStudentMonthBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+    })
+  
+  
+  
+  
+  
+  ////
+  
+  router.post('/alloStudentMonthlyBatch',isLoggedIn,  function(req,res){
+    var id =req.user._id
+    var month = req.body.month
+    var year = req.body.year
+    var grade = req.body.grade
+    var pro = req.user
+  
+      
+      
+  
+    req.check('month','Enter  Month').notEmpty();
+    req.check('year','Enter Year').notEmpty();
+    req.check('grade','Enter Grade').notEmpty();
+   
+   
+      
+    
+      
+      var errors = req.validationErrors();
+       
+      if (errors) {
+        req.session.errors = errors;
+        req.session.success = false;
+       // res.render('product/dispatchCust',{ errors:req.session.errors,pro:pro})
+  
+       req.flash('danger', req.session.errors[0].msg);
+         
+          
+       res.redirect('/records/alloStudentMonthlyBatch');
+  
+  
+      
+      }
+      
+      else {
+  
+      
+      
+      Year.findOne({'year':year})
+      .then(grower =>{
+      if(grower){
+        Month.findOne({'month':month})
+        .then(lock=>{
+          if(lock){
+     
+  User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelMonth:month,grade:grade}},function(err,docs){
+  
+  })
+  
+   
+  res.redirect('/records/arrMonthlyUpdate');
+          
+            
+            
+            
+          }
+        })
+  
+      
+  
+      
+      }else{
+  
+        req.flash('danger', 'Month/Year dont exist');
+   
+        res.redirect('/records/alloStudentMonthlyBatch');
+  
+  
+      
+  
+      }
+      
+      })
+      
+    }
+      })
+
+
+
+      
+router.get('/arrMonthlyUpdate',isLoggedIn,function(req,res){
+  var grade = req.user.grade
+  User.find({role:'student',grade:grade},function(err,docs){
+    for(var i=0;i<5;i++){
+      let uid = docs[i].uid
+       arr[uid]=[]
+    }
+  })
+  
+  res.redirect('/records/reportGen')
+  
+  })
+  
+  
+router.get('/reportGen',function(req,res){
+
+
+  console.log(arr,'vvx')
+  var m = moment()
+  /*var month = m.format('MMMM')
+    var year = m.format('YYYY')*/
+
+  var grade = req.user.grade
+  var month = req.user.hostelMonth
+  var year = req.user.hostelYear
+  console.log(month,year,'mmmmm')
+  //var term = req.user.term
+  User.find({role:"student",grade:grade},function(err,docs){
+  
+  for(var i = 0; i<5;i++){
+  
+  //console.log(docs[i].uid,'ccc')
+  let uid = docs[i].uid
+  //let uid = "SZ125"
+  
+  
+  //TestX.find({year:year,uid:uid},function(err,vocs) {
+    TestX.find({year:year,month:month,uid:uid,type3:"class"}).lean().then(vocs=>{
+  
+    
+  for(var x = 0;x<vocs.length;x++){
+    //size = docs.length
+    let subject = vocs[x].subject
+     
+     if( arr[uid].length > 0 && arr[uid].find(value => value.subject == subject) ){
+   
+           arr[uid].find(value => value.subject == subject).percentage += vocs[x].percentage;
+           arr[uid].find(value => value.subject == subject).size++;
+           //console.log(arr,'arrX')
+          }
+          
+           
+          
+          
+          else{
+            arr[uid].push(vocs[x])
+            // console.log(arr,'push')
+            
+              //element.size = 0
+              /*if(arr[uid].find(value => value.subject == subject)){*/
+         
+               
+                     arr[uid].find(value => value.subject == subject).size++;
+  
+  
+       
+              /*}*/
+            //  console.log(arr,'ll'+uid)
+              //element.size = element.size + 1
+                
+            } 
+  
+  
+           /* arr[uid].forEach((element,index)=>{
+              if(element.size > 0) {
+                //console.log(element,'element')
+              
+                //element.percentage  = element.percentage / element.size
+  
+                console.log(element.percentage, element.size,'drumless')
+                let num = Math.round(element.percentage)
+    num.toFixed(2)
+    element.percentage =num
+  
+  
+              }
+          
+            })*/
+  
+           
+  
+  }
+          })
+          }
+
+        res.redirect('/records/weight')
+        })
+  
+})
+
+
+router.get('/weight',isLoggedIn,function(req,res){
+  var grade = req.user.grade
+User.find({role:"student",grade:grade},function(err,hocs){
+for(var i = 0;i<5;i++){
 
 let uid = hocs[i].uid
 
@@ -331,20 +452,22 @@ res.redirect('/records/genPdf3')
 
 router.get('/genPdf3',isLoggedIn,function(req,res){
   var m = moment()
+  var grade = req.user.grade
   var month = m.format('MMMM')
     var year = m.format('YYYY')
     var mformat = m.format('L')
 /*console.log(arr,'iiii')*/
 
-User.find({role:"student"},function(err,docs){
-  for(var i = 0; i< docs.length;i++){
+User.find({role:"student",grade:grade},function(err,docs){
+  for(var i = 0; i< 5;i++){
 
   
   let uid = docs[i].uid
   let class1 = docs[i].class1
   let term = docs[i].term
+  let fullname = docs[i].fullname
 
-
+let filename = uid+"_"+fullname+"_"+month+'.pdf';
 const compile = async function (templateName, arr){
   const filePath = path.join(process.cwd(),'templates',`${templateName}.hbs`)
 
@@ -391,7 +514,7 @@ await page.setContent(content, { waitUntil: 'networkidle0'});
 //console.log(await page.pdf(),'7777')
 await page.pdf({
   //path:('../gitzoid2/reports/'+year+'/'+month+'/'+uid+'.pdf'),
-  path:(`./reports/${year}/${month}/${uid}`+'.pdf'),
+  path:(`./public/reports/${year}/${month}/${uid}_${fullname}_${month}`+'.pdf'),
   format:"A4",
   width:'24cm',
 height:'5cm',
@@ -404,7 +527,9 @@ var repo = new Report();
  
 repo.uid = uid;
 repo.month = month;
-repo.filename = uid+'.pdf';
+repo.fullname = fullname
+repo.filename = uid+"_"+fullname+"_"+month+'.pdf';
+repo.fileId = "null"
 repo.year = year;
 repo.term = term
 repo.date = mformat
@@ -421,6 +546,26 @@ process.exit()*/
 
 
 
+const file = await fs.readFile(`./public/reports/${year}/${month}/${uid}_${fullname}_${month}`+'.pdf');
+const form = new FormData();
+form.append("file", file,filename);
+//const headers = form.getHeaders();
+//Axios.defaults.headers.cookie = cookies;
+//console.log(form)
+await Axios({
+  method: "POST",
+  url: 'http://localhost:9500/records/uploadMonthReport',
+  headers: {
+    "Content-Type": "multipart/form-data"  
+  },
+  data: form
+});
+
+//res.redirect('/hostel/viewGatePass/'+id);
+    
+res.redirect('/records/arrMonthlyUpdateT')
+
+
 }catch(e) {
 
   console.log(e)
@@ -431,33 +576,166 @@ process.exit()*/
 }) ()
 
 }
-res.redirect('/records/weightX')
+
+})
+
+
+
 })
 
 
 
+router.post('/uploadMonthReport',upload.single('file'),(req,res,nxt)=>{
+  var fileId = req.file.id
+  console.log(fileId,'Receipt fileId')
+  var filename = req.file.filename
+  console.log(filename,'filename')
+  Report.find({filename:filename},function(err,docs){
+if(docs.length>0){
+
+
+//console.log(docs,'docs')
+let id = docs[0]._id
+Report.findByIdAndUpdate(id,{$set:{fileId:fileId}},function(err,tocs){
+
 })
+
+//res.redirect('/hostel/viewGatePass/'+id);
+
+}
+res.redirect('/records/arrMonthlyUpdateT')
+
+
+})
+
+})
+
 
 
 /////teacher
 
 
-Subject.find(function(err,docs){
+
+
+router.get('/alloTeacherMonthlyBatch',isLoggedIn,  function(req,res){
+  var pro = req.user
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
+  res.render('records/alloTeacherMonthBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+  })
+
+
+
+
+
+////
+
+router.post('/alloTeacherMonthlyBatch',isLoggedIn,  function(req,res){
+  var id =req.user._id
+  var month = req.body.month
+  var year = req.body.year
+  var grade = req.body.grade
+  var pro = req.user
+
+    
+    
+
+  req.check('month','Enter  Month').notEmpty();
+  req.check('year','Enter Year').notEmpty();
+  req.check('grade','Enter Grade').notEmpty();
+ 
+ 
+    
+  
+    
+    var errors = req.validationErrors();
+     
+    if (errors) {
+      req.session.errors = errors;
+      req.session.success = false;
+     // res.render('product/dispatchCust',{ errors:req.session.errors,pro:pro})
+
+     req.flash('danger', req.session.errors[0].msg);
+       
+        
+     res.redirect('/records/alloTeacherMonthlyBatch');
+
+
+    
+    }
+    
+    else {
+
+    
+    
+    Year.findOne({'year':year})
+    .then(grower =>{
+    if(grower){
+      Month.findOne({'month':month})
+      .then(lock=>{
+        if(lock){
+   
+User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelMonth:month,grade:grade}},function(err,docs){
+
+})
+
+ 
+res.redirect('/records/arrMonthlyUpdateT');
+        
+          
+          
+          
+        }
+      })
+
+    
+
+    
+    }else{
+
+      req.flash('danger', 'Month/Year dont exist');
+ 
+      res.redirect('/records/alloTeacherMonthlyBatch');
+
+
+    
+
+    }
+    
+    })
+    
+  }
+    })
+
+
+
+    
+      
+router.get('/arrMonthlyUpdateT',isLoggedIn,function(req,res){
+  var grade = req.user.grade
+ 
+Subject.find({grade:grade},function(err,docs){
   for(var i=0;i<docs.length;i++){
     let subjectCode = docs[i].code
     arr2[subjectCode]=[]
   }
 
 })
+  
+  res.redirect('/records/reportGenT')
+  
+  })
+  
 
 
 
+  router.get('/reportGenT',function(req,res){
 
-
+var grade = req.user.grade
 
 
 //var term = req.user.term
-Subject.find(function(err,zocs){
+Subject.find({grade:grade}, function(err,zocs){
 for(var z = 0; z<zocs.length;z++){
   let subjectCodeX = zocs[z].code
 
@@ -530,14 +808,17 @@ element.percentage =num
   }
 })
 }
+res.redirect('/records/weightX')
 
 })
 
+  })
 
 
-router.get('/weightX',function(req,res){
 
-Subject.find(function(err,docs){
+router.get('/weightX',isLoggedIn,function(req,res){
+var grade = req.user.grade
+Subject.find({grade:grade},function(err,docs){
 if(docs){
 for(var x = 0;x<docs.length;x++){
   let subjectCode = docs[x].code
@@ -620,22 +901,25 @@ res.redirect('/records/genPdf33')
 
 
 router.get('/genPdf33',isLoggedIn,function(req,res){
-  
+  var grade = req.user.grade
+ // console.log(arr2,'arr2')
 var m = moment()
-var month = m.format('MMMM')
-  var year = m.format('YYYY')
-  var mformat = m.format('L')
+var mformat = m.format('L')
+var month = req.user.hostelMonth
+var year = req.user.hostelYear
   
  // console.log(arr,'arr')
 /*console.log(arr,'iiii')*/
 
-Subject.find(function(err,docs){
+Subject.find({grade:grade},function(err,docs){
+  //console.log(docs,'docs')
 for(var i = 0; i< docs.length;i++){
 
 
 let subjectCode = docs[i].code
+console.log(subjectCode,'subjecCode')
 
-
+let filename = subjectCode+"_"+month+'.pdf';
 
 const compile = async function (templateName, arr2){
 const filePath = path.join(process.cwd(),'templates',`${templateName}.hbs`)
@@ -673,26 +957,31 @@ const page = await browser.newPage()
 const content = await compile('reportX2',arr2[subjectCode])
 
 await page.setContent(content, { waitUntil: 'networkidle2'});
- //await page.setContent(content)
+//await page.setContent(content)
 //create a pdf document
+await new Promise(function(resolve) {setTimeout(resolve, 2000)});
 
+await page.emulateMediaType('print');
+await page.emulateMediaType('screen')
+//let height = await page.evaluate(() => document.documentElement.offsetHeight);
+await page.evaluate(() => matchMedia('screen').matches);
 await page.setContent(content, { waitUntil: 'networkidle0'});
-//console.log(arr[uid],'tamama')
-
-await page.setContent(content)
 //create a pdf document
 
 await page.pdf({
-  path:(`./reports2/${year}/${month}/${subjectCode}`+'.pdf'),
+  path:(`./public/reports2/${year}/${month}/${subjectCode}_${month}`+'.pdf'),
 format:"A4",
-preferCSSPageSize: true,
+width:'24cm',
+height:'5cm',
 printBackground:true
 })
-var repo = new Report2();
 
+
+var repo = new Report2();
 repo.subjectCode = subjectCode;
 repo.month = month;
-repo.filename = subjectCode+'.pdf';
+repo.fileId = "null"
+repo.filename = subjectCode+"_"+month+'.pdf';
 repo.year = year;
 repo.date = mformat
 repo.type = "Monthly Assessment"
@@ -707,6 +996,24 @@ process.exit()
 req.flash('success', 'Reports Generated Successfully!');
   
 res.redirect('/records/dash')*/
+
+
+const file = await fs.readFile(`./public/reports2/${year}/${month}/${subjectCode}_${month}`+'.pdf');
+const form = new FormData();
+form.append("file", file,filename);
+//const headers = form.getHeaders();
+//Axios.defaults.headers.cookie = cookies;
+//console.log(form)
+await Axios({
+  method: "POST",
+  url: 'http://localhost:9500/records/uploadMonthTeacherReport',
+  headers: {
+    "Content-Type": "multipart/form-data"  
+  },
+  data: form
+});
+
+res.redirect('/records/dash')
 
 }catch(e) {
 
@@ -725,6 +1032,33 @@ res.redirect('/records/dash')*/
 
 
 })
+
+
+
+
+router.post('/uploadMonthTeacherReport',upload.single('file'),(req,res,nxt)=>{
+  var fileId = req.file.id
+  console.log(fileId,'Receipt fileId')
+  var filename = req.file.filename
+  console.log(filename,'filename')
+  Report2.find({filename:filename},function(err,docs){
+if(docs.length>0){
+
+
+//console.log(docs,'docs')
+let id = docs[0]._id
+Report2.findByIdAndUpdate(id,{$set:{fileId:fileId}},function(err,tocs){
+
+})
+res.redirect('/records/dash')
+//res.redirect('/hostel/viewGatePass/'+id);
+}
+
+
+})
+
+})
+
 
 
 
@@ -790,22 +1124,114 @@ res.redirect('/records/dash')
 
  //EOT Reports
 
- User.find({role:'student'},function(err,docs){
-  for(var i=0;i<docs.length;i++){
-    let uid = docs[i].uid
-     arrE[uid]=[]
-  }
+
+
+
+router.get('/alloTermBatch',isLoggedIn,  function(req,res){
+  var pro = req.user
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
+  res.render('records/alloTermBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+  })
+
+
+
+
+
+////
+
+router.post('/alloTermBatch',isLoggedIn,  function(req,res){
+  var id =req.user._id
+  var term = req.body.term
+  var year = req.body.year
+  var pro = req.user
+
+    
+    
+
+  req.check('term','Enter  Term').notEmpty();
+  req.check('year','Enter Year').notEmpty();
+ 
+ 
+    
+  
+    
+    var errors = req.validationErrors();
+     
+    if (errors) {
+      req.session.errors = errors;
+      req.session.success = false;
+     // res.render('product/dispatchCust',{ errors:req.session.errors,pro:pro})
+
+     req.flash('danger', req.session.errors[0].msg);
+       
+        
+     res.redirect('/records/alloTermBatch');
+
+
+    
+    }
+    
+    else {
+
+    
+    
+    Year.findOne({'year':year})
+    .then(grower =>{
+    if(grower){
+     
+   
+User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelTerm:term}},function(err,docs){
+
 })
 
-console.log('vvx')
-var m = moment()
-var month = m.format('MMMM')
-  var year = m.format('YYYY')
-console.log(month,'mmmmm')
-//var term = req.user.term
-User.find({role:"student"},function(err,docs){
+ 
+res.redirect('/records/arrExamUpdate');
+        
+          
+          
+          
+       
+    
 
-for(var i = 0; i<docs.length;i++){
+    
+    }else{
+
+      req.flash('danger', 'Year dont exist');
+ 
+      res.redirect('/records/alloTermBatch');
+
+
+    
+
+    }
+    
+    })
+    
+  }
+    })
+
+
+    router.get('/arrExamUpdate',isLoggedIn,function(req,res){
+      var grade = req.user.grade
+      User.find({role:'student',grade:grade},function(err,docs){
+        for(var i=0;i<5;i++){
+          let uid = docs[i].uid
+           arrE[uid]=[]
+        }
+      })
+      res.redirect('/records/reportGenE')
+      
+      })
+
+ router.get('/reportGenE',isLoggedIn,function(req,res){
+  var grade = req.user.grade
+  var month = req.user.hostelMonth
+  var year = req.user.hostelYear
+//var term = req.user.term
+User.find({role:"student",grade:grade},function(err,docs){
+
+for(var i = 0; i<5;i++){
 
 //console.log(docs[i].uid,'ccc')
 let uid = docs[i].uid
@@ -814,7 +1240,7 @@ let term = docs[i].term
 
 
 //TestX.find({year:year,uid:uid},function(err,vocs) {
-  TestX.find({year:year,uid:uid,type:"Final Exam",type3:"exam",term:term}).lean().then(vocs=>{
+  TestX.find({year:year,uid:uid,type:"Final Exam",term:term}).lean().then(vocs=>{
 
   
 for(var x = 0;x<vocs.length;x++){
@@ -871,13 +1297,16 @@ for(var x = 0;x<vocs.length;x++){
 }
         })
         }
+        res.redirect('/records/weightExam')
       })
+    })
 
 /*})*/
 
-router.get('/weightExam',function(req,res){
-User.find({role:"student"},function(err,hocs){
-for(var i = 0;i<hocs.length;i++){
+router.get('/weightExam',isLoggedIn,function(req,res){
+  var grade = req.user.grade
+User.find({role:"student",grade:grade},function(err,hocs){
+for(var i = 0;i<5;i++){
 
 let uid = hocs[i].uid
 
@@ -951,20 +1380,23 @@ res.redirect('/records/genPdf3Exam')
 
 router.get('/genPdf3Exam',isLoggedIn,function(req,res){
   var m = moment()
+  console.log(arrE,'arrE')
   var month = m.format('MMMM')
+  var grade = req.user.grade
     var year = m.format('YYYY')
     var mformat = m.format('L')
 /*console.log(arr,'iiii')*/
 
-User.find({role:"student"},function(err,docs){
-  for(var i = 0; i< docs.length;i++){
+User.find({role:"student",grade:grade},function(err,docs){
+  for(var i = 0; i< 5;i++){
 
   
   let uid = docs[i].uid
   let class1 = docs[i].class1
-  let term = docs[i].term
+  let term = 2
+  let fullname = docs[i].fullname
 
-
+let filename = uid+'_'+fullname+'_'+term+'.pdf'
 const compile = async function (templateName, arrE){
   const filePath = path.join(process.cwd(),'templates',`${templateName}.hbs`)
 
@@ -1004,18 +1436,17 @@ const page = await browser.newPage()
  await page.setContent(content, { waitUntil: 'networkidle2'});
  //await page.setContent(content)
 //create a pdf document
-
+await page.emulateMediaType('screen')
+await page.evaluate(() => matchMedia('screen').matches);
 await page.setContent(content, { waitUntil: 'networkidle0'});
-
- await page.setContent(content)
 //create a pdf document
 //console.log(await page.pdf(),'7777')
 await page.pdf({
   //path:('../gitzoid2/reports/'+year+'/'+month+'/'+uid+'.pdf'),
-  path:(`./reportsExam/${year}/${month}/${uid}`+'.pdf'),
+  path:(`./public/reportsExam/${year}/${term}/${uid}_${fullname}_${term}`+'.pdf'),
   format:"A4",
-  width:'24cm',
-  height:'5cm',
+  width:'30cm',
+height:'21cm',
   printBackground:true
 })
 
@@ -1025,7 +1456,9 @@ var repo = new Report();
  
 repo.uid = uid;
 repo.month = month;
-repo.filename = uid+'.pdf';
+repo.filename = uid+'_'+fullname+'_'+term+'.pdf'
+repo.fileId = "null"
+repo.fullname = fullname
 repo.year = year;
 repo.date = mformat
 repo.term = term
@@ -1039,7 +1472,22 @@ repo.save().then(poll =>{
 /*await browser.close()
 
 process.exit()*/
+const file = await fs.readFile(`./public/reportsExam/${year}/${term}/${uid}_${fullname}_${term}`+'.pdf');
+const form = new FormData();
+form.append("file", file,filename);
+//const headers = form.getHeaders();
+//Axios.defaults.headers.cookie = cookies;
+//console.log(form)
+await Axios({
+  method: "POST",
+  url: 'http://localhost:9500/records/uploadStudentExamReport',
+  headers: {
+    "Content-Type": "multipart/form-data"  
+  },
+  data: form
+});
 
+res.redirect('/records/arrExamUpdate2')
 
 
 }catch(e) {
@@ -1052,29 +1500,152 @@ process.exit()*/
 }) ()
 
 }
-res.redirect('/records/weightXExam')
+//res.redirect('/records/weightXExam')
 })
 
 
 
 })
+
+
+
+router.post('/uploadStudentExamReport',upload.single('file'),(req,res,nxt)=>{
+  var fileId = req.file.id
+  console.log(fileId,'Receipt fileId')
+  var filename = req.file.filename
+  console.log(filename,'filename')
+  Report2.find({filename:filename},function(err,docs){
+if(docs.length>0){
+
+
+//console.log(docs,'docs')
+let id = docs[0]._id
+Report2.findByIdAndUpdate(id,{$set:{fileId:fileId}},function(err,tocs){
+
+})
+res.redirect('/records/arrExamUpdate2')
+//res.redirect('/hostel/viewGatePass/'+id);
+}
+
+
+})
+
+})
+
+
+
 
 
 /////teacher
 
 
-Subject.find(function(err,docs){
-  for(var i=0;i<docs.length;i++){
-    let subjectCode = docs[i].code
-    arrE2[subjectCode]=[]
-  }
+
+router.get('/alloTermBatch2',isLoggedIn,  function(req,res){
+  var pro = req.user
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
+  res.render('records/alloTermBatch2',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+  })
+
+
+
+
+
+////
+
+router.post('/alloTermBatch2',isLoggedIn,  function(req,res){
+  var id =req.user._id
+  var term = req.body.term
+  var year = req.body.year
+  var pro = req.user
+
+    
+    
+
+  req.check('term','Enter  Term').notEmpty();
+  req.check('year','Enter Year').notEmpty();
+ 
+ 
+    
+  
+    
+    var errors = req.validationErrors();
+     
+    if (errors) {
+      req.session.errors = errors;
+      req.session.success = false;
+     // res.render('product/dispatchCust',{ errors:req.session.errors,pro:pro})
+
+     req.flash('danger', req.session.errors[0].msg);
+       
+        
+     res.redirect('/records/alloTermBatch2');
+
+
+    
+    }
+    
+    else {
+
+    
+    
+    Year.findOne({'year':year})
+    .then(grower =>{
+    if(grower){
+     
+   
+User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelTerm:term}},function(err,docs){
 
 })
 
+ 
+res.redirect('/records/arrExamUpdate2');
+        
+          
+          
+          
+       
+    
+
+    
+    }else{
+
+      req.flash('danger', 'Year dont exist');
+ 
+      res.redirect('/records/alloTermBatch2');
+
+
+    
+
+    }
+    
+    })
+    
+  }
+    })
+
+    router.get('/arrExamUpdate2',isLoggedIn,function(req,res){
+      var grade = req.user.grade
+      Subject.find(function(err,docs){
+        for(var i=0;i<docs.length;i++){
+          let subjectCode = docs[i].code
+          arrE2[subjectCode]=[]
+        }
+      
+      })
+      res.redirect('/records/reportGenE2')
+      
+      })
 
 
 
 
+
+
+      router.get('/reportGenE2',isLoggedIn,function(req,res){
+        var grade = req.user.grade
+        var month = req.user.hostelMonth
+        var year = req.user.hostelYear
 
 
 //var term = req.user.term
@@ -1151,10 +1722,10 @@ element.percentage =num
   }
 })
 }
-
+res.redirect('/records/weightXExam')
 })
 
-
+      })
 
 router.get('/weightXExam',function(req,res){
 
@@ -1257,7 +1828,7 @@ for(var i = 0; i< docs.length;i++){
 
 let subjectCode = docs[i].code
 
-
+let filename = subjectCode+'_'+term+'.pdf'
 
 const compile = async function (templateName, arrE2){
 const filePath = path.join(process.cwd(),'templates',`${templateName}.hbs`)
@@ -1292,7 +1863,7 @@ const page = await browser.newPage()
 
 
 
-const content = await compile('reportExam2',arrE2[subjectCode])
+const content = await compile('statement3',arrE2[subjectCode])
 
 //console.log(arr[uid],'tamama')
 await page.setContent(content, { waitUntil: 'networkidle2'});
@@ -1305,17 +1876,18 @@ await page.setContent(content)
 //create a pdf document
 
 await page.pdf({
-  path:(`./reportsExam2/${year}/${month}/${subjectCode}`+'.pdf'),
+  path:(`./public/reportsExam2/${year}/${term}/${subjectCode}_${term}`+'.pdf'),
 format:"A4",
 width:'24cm',
 height:'5cm',
-  printBackground:true
+printBackground:true
 })
 var repo = new Report2();
 
 repo.subjectCode = subjectCode;
 repo.month = month;
-repo.filename = subjectCode+'.pdf';
+repo.filename = subjectCode+'_'+term+'.pdf';
+repo.fileId = 'null'
 repo.year = year;
 repo.date = mformat
 repo.term = term
@@ -1332,13 +1904,27 @@ req.flash('success', 'Reports Generated Successfully!');
   
 res.redirect('/records/dash')*/
 
+
+const file = await fs.readFile(`./public/reportsExam2/${year}/${term}/${subjectCode}_${term}`+'.pdf');
+const form = new FormData();
+form.append("file", file,filename);
+//const headers = form.getHeaders();
+//Axios.defaults.headers.cookie = cookies;
+//console.log(form)
+await Axios({
+  method: "POST",
+  url: 'http://localhost:9500/records/uploadMonthTeacherExamReport',
+  headers: {
+    "Content-Type": "multipart/form-data"  
+  },
+  data: form
+});
+res.redirect('/records/dash')
+
 }catch(e) {
 
 console.log(e)
-/*
-req.flash('danger', 'Reports Generation Failed!');
-  
-res.redirect('/records/dash')*/
+
 }
 
 }) ()
@@ -1349,6 +1935,39 @@ res.redirect('/records/dash')*/
 
 
 })
+
+
+
+
+
+
+router.post('/uploadMonthTeacherExamReport',upload.single('file'),(req,res,nxt)=>{
+  var fileId = req.file.id
+  console.log(fileId,'Receipt fileId')
+  var filename = req.file.filename
+  console.log(filename,'filename')
+  Report2.find({filename:filename},function(err,docs){
+if(docs.length>0){
+
+//console.log(docs,'docs')
+let id = docs[0]._id
+Report2.findByIdAndUpdate(id,{$set:{fileId:fileId}},function(err,tocs){
+
+})
+res.redirect('/records/dash')
+//res.redirect('/hostel/viewGatePass/'+id);
+}
+
+
+})
+
+})
+
+
+
+
+
+
 
 
 

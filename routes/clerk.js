@@ -11185,8 +11185,8 @@ let filename = 'statement'+'_'+studentName+'.pdf'
   //console.log(form)
 await Axios({
     method: "POST",
-   url: 'https://portal.steuritinternationalschool.org/clerk/uploadStatement',
-     //url: 'http://localhost:9500/clerk/uploadStatement',
+   //url: 'https://portal.steuritinternationalschool.org/clerk/uploadStatement',
+     url: 'http://localhost:9500/clerk/uploadStatement',
     headers: {
       "Content-Type": "multipart/form-data"  
     },
@@ -11806,7 +11806,16 @@ if (errors) {
 
 
   
-
+router.get('/updateTerm',function(req,res){
+  User.find(function(err,docs){
+    for(var i= 0;i<docs.length;i++){
+      let id = docs[i]._id
+      User.findByIdAndUpdate(id,{$set:{term:2}},function(err,locs){
+        
+      })
+    }
+  })
+})
   
 module.exports = router;
 

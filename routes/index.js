@@ -113,6 +113,10 @@ let gfs;
 
 conn.once('open', () => {
   // Init stream
+
+  gridfsBucket = new mongoose.mongo.GridFSBucket(conn.db, {
+    bucketName: 'uploads'
+  })
   gfs = Grid(conn.db, mongoose.mongo);
   gfs.collection('uploads');
 });
@@ -147,25 +151,7 @@ const storage = new GridFsStorage({
     });
   }
 });
-/*
-const storage = new GridFsStorage({
-  url: mongoURI,
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      crypto.randomBytes(16, (err, buf) => {
-        if (err) {
-          return reject(err);
-        }
-        const filename = buf.toString('hex') + path.extname(file.originalname);
-        const fileInfo = {
-          filename: filename,
-          bucketName: 'uploads'
-        };
-        resolve(fileInfo);
-      });
-    });
-  }
-});*/
+
 
 const upload = multer({ storage })
 
@@ -218,7 +204,7 @@ router.post('/upload', upload.single('file'), (req, res) => {
   res.redirect('/upload');
 });
 
-
+/*
 router.get('/image/:filename', (req, res) => {
   gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
     // Check if file
@@ -241,14 +227,23 @@ router.get('/image/:filename', (req, res) => {
       });
     }
   });
-});
+});*/
 
 
 
+router.get('/image/:fileId', (req, res) => {
 
-router.get('/imageC/:fileId', (req, res) => {
+  conn.once('open', () => {
+    //Init Stream
+    gridfsBucket = new mongoose.mongo.GridFSBucket(conn.db, {
+      bucketName: 'uploads'
+    })
+    gfs = Grid(conection.db, mongoose.mongo);
+    gfs.collection('uploads');
+  })
   let fileId = req.params.fileId
-
+  console.log(fileId,'fileId')
+  const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
   gfs.files.findOne({ _id: mongodb.ObjectId(fileId) }, (err, file) => {
     // Check if file
     if (!file || file.length === 0) {
@@ -262,7 +257,47 @@ router.get('/imageC/:fileId', (req, res) => {
       // Read output to browser
 
       console.log(file,'file baba')
-      const readstream = gfs.createReadStream(file.filename);
+      const readstream = gridfsBucket.openDownloadStream(file._id);
+      readstream.pipe(res);
+    } else {
+      res.status(404).json({
+        err: 'Not an image'
+      });
+    }
+  });
+});
+
+
+
+
+
+router.get('/imageC/:fileId', (req, res) => {
+
+  conn.once('open', () => {
+    //Init Stream
+    gridfsBucket = new mongoose.mongo.GridFSBucket(conn.db, {
+      bucketName: 'uploads'
+    })
+    gfs = Grid(conection.db, mongoose.mongo);
+    gfs.collection('uploads');
+  })
+  let fileId = req.params.fileId
+  console.log(fileId,'fileId')
+  const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+  gfs.files.findOne({ _id: mongodb.ObjectId(fileId) }, (err, file) => {
+    // Check if file
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        err: 'No file exists'
+      });
+    }
+
+    // Check if image
+    if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+      // Read output to browser
+
+      console.log(file,'file baba')
+      const readstream = gridfsBucket.openDownloadStream(file._id);
       readstream.pipe(res);
     } else {
       res.status(404).json({

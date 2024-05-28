@@ -83,7 +83,7 @@ User.find(function(err,docs){
  }
 })*/
 
-const mongoURI =process.env.MONGO_URL||  'mongodb://0.0.0.0:27017/smsDB';
+const mongoURI =process.env.MONGO_URL||  'mongodb://0.0.0.0:27017/euritDB';
 
 const conn = mongoose.createConnection(mongoURI);
 
@@ -7365,8 +7365,13 @@ var uid= req.user._id
 
 Test.find({teacherId:uid, type2:'online quiz'},(err, docs) => {
 if (!err) {
+  let arr=[]
+  for(var i = docs.length - 1; i>=0; i--){
+
+    arr.push(docs[i])
+  }
    res.render("teacherExam/listTest", {
-      listX:docs, pro:pro
+      listX:arr, pro:pro
      
    });
 }
@@ -7463,6 +7468,7 @@ var id = req.user._id;
 var duration = req.body.duration
 var time = req.body.start
 var type = req.body.type
+var term = req.user.term
 var grade = req.body.grade
 var quizBatch = req.body.number
 var stdNum
@@ -7551,7 +7557,7 @@ test.teacherName = teacherName;
 test.teacherId = teacherId
 test.numberOfStudents = 0;
 test.passRate = 0;
-test.term = 1;
+test.term = term;
 test.displayFormat = displayFormat
 test.question = 'null';
 test.possibleMark = quizBatch
@@ -7882,11 +7888,11 @@ var answer = req.body.answer;
 var duration = req.user.quizDuration
 
 var fileId 
-var year = 2023
+var year = 2024
 var quizId = req.user.quizId
 var id = req.user._id
 var pro = req.user
-
+var term = req.user.term
 var idX 
 
 
@@ -7982,7 +7988,7 @@ for(var i = 0;i<docs.length;i++){
 let questionVI = tes.questionStore
 let fileIdV = tes.fileId
 if(tes.filename !== 'null'){
-  let questionV = `<br> <br> ${questionVI} <img src="imageC/${fileIdV}">`
+  let questionV = `<br> <br> ${questionVI} <img src="imageC/${fileIdV}" style="display:block;margin-left:auto;margin-right:auto;width:100%">`
   Question.findByIdAndUpdate(tes._id,{$set:{question:questionV}},function(err,docs){
 
   })
@@ -8055,13 +8061,15 @@ if(tes.filename !== 'null'){
   
   })
   x++
+  console.log(x,'xx')
   User.findByIdAndUpdate(id,{$set:{questNo:x}}, function(err,docs){
   })
   
+  res.redirect('/teacher/set')
 })
 
 
-res.redirect('/teacher/set')
+
 })
 
 

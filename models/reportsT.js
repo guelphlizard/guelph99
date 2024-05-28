@@ -7,8 +7,8 @@ var report2Schema = new mongoose.Schema({
 subjectCode:{type:String, required:true},
 month:{type:String, required:true},
 filename:{type:String, required:true},
+fileId:{type:String, required:true},
 year:{type:Number, required:true},
-term:{type:Number},
 date:{type:String, required:true},
 type:{type:String, required:true}
 
