@@ -5679,7 +5679,7 @@ router.get('/teacherAnalytics/:id',isLoggedIn,adminX,function(req,res){
    let fullname = voc.fullname
   
   Class1.find({},function(err,locs){
-    TeacherSub.find({},{teacherId:uid},function(err,docs){
+    TeacherSub.find({teacherId:uid},function(err,docs){
 
 
       res.render('admin/teacherAn',{arr1:locs,listX:docs,fullname:fullname,uid:uid,pro:pro})
@@ -7707,15 +7707,7 @@ var uid1 = prefix1 + idNum1
 
               
 
-router.get('/files',isLoggedIn,adminX,function(req,res){
-  var pro = req.user
 
-  Class1.find({},function(err,docs){
-    res.render('admin/folders',{listX:docs,pro:pro})
-
-  })
-
-})
 
 
 
@@ -7729,7 +7721,15 @@ router.get('/teachersFiles',isLoggedIn,adminX,function(req,res){
   })
 
 })
+router.get('/classFiles',isLoggedIn,function(req,res){
+  var pro = req.user
 
+  Class1.find({},function(err,docs){
+    res.render('admin/folders',{listX:docs,pro:pro})
+
+  })
+
+})
 
 router.get('/subjectFile/:id',isLoggedIn,adminX,function(req,res){
   var pro = req.user
@@ -8948,7 +8948,7 @@ router.get('/classAssgt/:id',isLoggedIn,adminX,function(req,res){
     let class1 = doc.class1
     let id1 = doc._id
     let subjectCode = doc.subjectCode
-    Class1.find({class1:class1,companyId:companyId},function(err,kocs){
+    Class1.find({class1:class1},function(err,kocs){
   
     let id2 = kocs[0]._id
     Test.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Assignment'},function(err,locs){

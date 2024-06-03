@@ -340,7 +340,7 @@ $.ajax({
     data:{uid:uid},
     url: "/dashChartX",
     success: function(data) {
-      console.log(data,'data')
+      console.log(data,'data5')
       let labels1=[]
       let labels2=[]
 for (var i = 0;i<data.length;i++){

@@ -93,7 +93,7 @@ var uploadX = multer({
 
 
 
-const mongoURI = process.env.MONGO_URL ||'mongodb://0.0.0.0:27017/smsDB';
+const mongoURI = process.env.MONGO_URL ||'mongodb://0.0.0.0:27017/euritDB';
 
 const conn = mongoose.createConnection(mongoURI);
 
@@ -5140,6 +5140,7 @@ router.get('/materialFiles/:id',isLoggedIn,student,function(req,res){
   var id = req.params.id
   var term = req.user.term
   var m = moment()
+  let arr=[]
 var year = m.format('YYYY')
   var pro = req.user
   StudentSub.findById(id,function(err,doc){

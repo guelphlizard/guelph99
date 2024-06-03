@@ -9501,7 +9501,10 @@ router.get('/typeFolderClassRepo/:id',isLoggedIn,teacher,function(req,res){
 router.get('/typeFolderMaterial/:id',isLoggedIn,teacher,function(req,res){
   var id = req.params.id
   var term = req.user.term
-  var year = 2023
+  var m = moment()
+  var mformat = m.format('L')
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
   var pro = req.user
 
   TeacherSub.findById(id,function(err,doc){
