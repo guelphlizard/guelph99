@@ -63,6 +63,7 @@ var Quiz = require('../models/quiz');
 const stripe = require('stripe')('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');
 const keys = require('../config1/keys')
 var mongoose = require('mongoose')
+var mongodb = require('mongodb');
 const { google } = require("googleapis");
 const OAuth2 = google.auth.OAuth2;
 const jwt = require('jsonwebtoken');
@@ -554,7 +555,8 @@ form.append("file", file,filename);
 //console.log(form)
 await Axios({
   method: "POST",
-  url: 'http://localhost:9500/records/uploadMonthReport',
+  //url: 'http://localhost:9500/records/uploadMonthReport',
+  url: 'https://portal.steuritinternationalschool.org/records/uploadMonthReport',
   headers: {
     "Content-Type": "multipart/form-data"  
   },
@@ -1006,7 +1008,9 @@ form.append("file", file,filename);
 //console.log(form)
 await Axios({
   method: "POST",
-  url: 'http://localhost:9500/records/uploadMonthTeacherReport',
+  //url: 'http://localhost:9500/records/uploadMonthTeacherReport',
+  url: 'https://portal.steuritinternationalschool.org/records/uploadMonthTeacherReport',
+  
   headers: {
     "Content-Type": "multipart/form-data"  
   },
@@ -1131,8 +1135,10 @@ router.get('/alloTermBatch',isLoggedIn,  function(req,res){
   var pro = req.user
   var errorMsg = req.flash('danger')[0];
   var successMsg = req.flash('success')[0];
-  res.render('records/alloTermBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+  Class1.find(function(err,docs){
+  res.render('records/alloTermBatch',{pro:pro,arr:docs,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
   })
+})
 
 
 
@@ -1145,12 +1151,14 @@ router.post('/alloTermBatch',isLoggedIn,  function(req,res){
   var term = req.body.term
   var year = req.body.year
   var pro = req.user
+  var class1 = req.body.class1
 
     
     
 
   req.check('term','Enter  Term').notEmpty();
   req.check('year','Enter Year').notEmpty();
+  req.check('class1','Enter Class').notEmpty();
  
  
     
@@ -1181,7 +1189,7 @@ router.post('/alloTermBatch',isLoggedIn,  function(req,res){
     if(grower){
      
    
-User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelTerm:term}},function(err,docs){
+User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelTerm:term,class1:class1}},function(err,docs){
 
 })
 
@@ -1213,8 +1221,9 @@ res.redirect('/records/arrExamUpdate');
 
 
     router.get('/arrExamUpdate',isLoggedIn,function(req,res){
-      var grade = req.user.grade
-      User.find({role:'student',grade:grade},function(err,docs){
+      var class1 = req.user.class1
+
+      User.find({role:'student',class1:class1},function(err,docs){
         for(var i=0;i<5;i++){
           let uid = docs[i].uid
            arrE[uid]=[]
@@ -1225,11 +1234,12 @@ res.redirect('/records/arrExamUpdate');
       })
 
  router.get('/reportGenE',isLoggedIn,function(req,res){
-  var grade = req.user.grade
+ 
+  var class1 = req.user.class1
   var month = req.user.hostelMonth
   var year = req.user.hostelYear
 //var term = req.user.term
-User.find({role:"student",grade:grade},function(err,docs){
+User.find({role:"student",class1:class1},function(err,docs){
 
 for(var i = 0; i<5;i++){
 
@@ -1240,7 +1250,7 @@ let term = docs[i].term
 
 
 //TestX.find({year:year,uid:uid},function(err,vocs) {
-  TestX.find({year:year,uid:uid,type:"Final Exam",term:term}).lean().then(vocs=>{
+  TestX.find({year:year,uid:uid,type:"Final Exam",term:term,class1:class1}).lean().then(vocs=>{
 
   
 for(var x = 0;x<vocs.length;x++){
@@ -1304,8 +1314,8 @@ for(var x = 0;x<vocs.length;x++){
 /*})*/
 
 router.get('/weightExam',isLoggedIn,function(req,res){
-  var grade = req.user.grade
-User.find({role:"student",grade:grade},function(err,hocs){
+  var grade = req.user.class1
+User.find({role:"student",class1:grade},function(err,hocs){
 for(var i = 0;i<5;i++){
 
 let uid = hocs[i].uid
@@ -1382,18 +1392,18 @@ router.get('/genPdf3Exam',isLoggedIn,function(req,res){
   var m = moment()
   console.log(arrE,'arrE')
   var month = m.format('MMMM')
-  var grade = req.user.grade
+  var class1 = req.user.class1
     var year = m.format('YYYY')
     var mformat = m.format('L')
 /*console.log(arr,'iiii')*/
 
-User.find({role:"student",grade:grade},function(err,docs){
+User.find({role:"student",class1:class1},function(err,docs){
   for(var i = 0; i< 5;i++){
 
   
   let uid = docs[i].uid
   let class1 = docs[i].class1
-  let term = 2
+  let term = docs[i].term
   let fullname = docs[i].fullname
 
 let filename = uid+'_'+fullname+'_'+term+'.pdf'
@@ -1480,14 +1490,17 @@ form.append("file", file,filename);
 //console.log(form)
 await Axios({
   method: "POST",
-  url: 'http://localhost:9500/records/uploadStudentExamReport',
+  //url: 'http://localhost:9500/records/uploadStudentExamReport',
+  url: 'https://portal.steuritinternationalschool.org/records/uploadStudentExamReport',
+
   headers: {
     "Content-Type": "multipart/form-data"  
   },
   data: form
 });
 
-res.redirect('/records/arrExamUpdate2')
+req.flash('success', 'Student Reports Generated Successfully');
+res.redirect('/records/alloTermBatch')
 
 
 }catch(e) {
@@ -1523,7 +1536,8 @@ let id = docs[0]._id
 Report2.findByIdAndUpdate(id,{$set:{fileId:fileId}},function(err,tocs){
 
 })
-res.redirect('/records/arrExamUpdate2')
+req.flash('success', 'Student Reports Generated Successfully');
+res.redirect('/records/alloTermBatch')
 //res.redirect('/hostel/viewGatePass/'+id);
 }
 
@@ -1542,10 +1556,15 @@ res.redirect('/records/arrExamUpdate2')
 
 router.get('/alloTermBatch2',isLoggedIn,  function(req,res){
   var pro = req.user
+
   var errorMsg = req.flash('danger')[0];
   var successMsg = req.flash('success')[0];
-  res.render('records/alloTermBatch2',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+  Class1.find(function(err,docs){
+
+
+  res.render('records/alloTermBatch2',{pro:pro,arr:docs,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
   })
+})
 
 
 
@@ -1557,6 +1576,7 @@ router.post('/alloTermBatch2',isLoggedIn,  function(req,res){
   var id =req.user._id
   var term = req.body.term
   var year = req.body.year
+  var class1 = req.body.class1
   var pro = req.user
 
     
@@ -1564,6 +1584,7 @@ router.post('/alloTermBatch2',isLoggedIn,  function(req,res){
 
   req.check('term','Enter  Term').notEmpty();
   req.check('year','Enter Year').notEmpty();
+  req.check('class1','Enter  Class').notEmpty();
  
  
     
@@ -1594,7 +1615,7 @@ router.post('/alloTermBatch2',isLoggedIn,  function(req,res){
     if(grower){
      
    
-User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelTerm:term}},function(err,docs){
+User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelTerm:term,class1:class1}},function(err,docs){
 
 })
 
@@ -1626,7 +1647,8 @@ res.redirect('/records/arrExamUpdate2');
 
     router.get('/arrExamUpdate2',isLoggedIn,function(req,res){
       var grade = req.user.grade
-      Subject.find(function(err,docs){
+      var class1 = req.user.class1
+      Subject.find({class1:class1},function(err,docs){
         for(var i=0;i<docs.length;i++){
           let subjectCode = docs[i].code
           arrE2[subjectCode]=[]
@@ -1646,14 +1668,16 @@ res.redirect('/records/arrExamUpdate2');
         var grade = req.user.grade
         var month = req.user.hostelMonth
         var year = req.user.hostelYear
+        var class1 = req.user.class1
 
 
 //var term = req.user.term
-Subject.find(function(err,zocs){
+Subject.find({class1:class1},function(err,zocs){
+  console.log(zocs,'zocs')
 for(var z = 0; z<zocs.length;z++){
   let subjectCodeX = zocs[z].code
 
-  StudentSub.find({subjectCode:subjectCodeX},function(err,tocs){
+  StudentSub.find({subjectCode:subjectCodeX,class1:class1},function(err,tocs){
     for(var q = 0;q<tocs.length;q++){
       let uid = tocs[q].studentId
    
@@ -1661,7 +1685,8 @@ for(var z = 0; z<zocs.length;z++){
 
 
 
-      TestX.find({year:year,uid:uid,type:"Final Exam",month:month}).lean().then(vocs=>{
+      TestX.find({year:year,uid:uid,type:"Final Exam",class1:class1}).lean().then(vocs=>{
+        console.log(vocs,'vocs')
 for(var x = 0;x<vocs.length;x++){
 //size = docs.length
 let subjectCode = vocs[x].subjectCode
@@ -1727,10 +1752,11 @@ res.redirect('/records/weightXExam')
 
       })
 
-router.get('/weightXExam',function(req,res){
-
-Subject.find(function(err,docs){
-if(docs){
+router.get('/weightXExam',isLoggedIn,function(req,res){
+var class1 = req.user.class1
+console.log(arrE2,'arrE2')
+Subject.find({class1:class1},function(err,docs){
+if(docs.length > 1){
 for(var x = 0;x<docs.length;x++){
   let subjectCode = docs[x].code
 
@@ -1818,11 +1844,12 @@ var month = m.format('MMMM')
   var year = m.format('YYYY')
   var mformat = m.format('L')
   var term = req.user.term
+  var class1 = req.user.class1
   
  // console.log(arr,'arr')
 /*console.log(arr,'iiii')*/
 
-Subject.find(function(err,docs){
+Subject.find({class1:class1},function(err,docs){
 for(var i = 0; i< docs.length;i++){
 
 
@@ -1913,7 +1940,8 @@ form.append("file", file,filename);
 //console.log(form)
 await Axios({
   method: "POST",
-  url: 'http://localhost:9500/records/uploadMonthTeacherExamReport',
+  //url: 'http://localhost:9500/records/uploadMonthTeacherExamReport',
+  url: 'https://portal.steuritinternationalschool.org/records/uploadMonthTeacherExamReport',
   headers: {
     "Content-Type": "multipart/form-data"  
   },
@@ -2057,6 +2085,21 @@ res.redirect('/records/dash')
     }
   })
 })
+
+
+router.get('/deleteFinalExams',function(req,res){
+  TestX.find({type:"Final Exam"},function(err,docs){
+   for(var i = 0; i<docs.length;i++){
+     let id = docs[i]._id
+     TestX.findByIdAndRemove(id,function(err,locs){
+       
+     })
+   }
+  
+  })
+  
+      })
+  
 
 router.get('/stats',isLoggedIn,records, function(req,res){
     var students, teachers, paid, unpaid, depts, class1
@@ -10704,19 +10747,39 @@ router.get('/studentMonthlyReportFiles/:id',isLoggedIn,records,function(req,res)
 
 
 router.get('/studentDownloadMonthlyReport/:id',isLoggedIn,records,function(req,res){
-  var m = moment()
-  var month = m.format('MMMM')
-  var year = m.format('YYYY')
-  var mformat = m.format('L')
-  Report.findById(req.params.id,function(err,doc){
-    var name = doc.filename;
-    //res.download( './public/uploads/'+name, name)
+  var fileId = req.params.id
+    
  
-    res.download( './reports/'+year+'/'+month+'/'+name, name)
-  })  
+  
+  //const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+  const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+  gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+  
+    console.log(files[0].filename,'files9')
+  let filename = files[0].filename
+  let contentType = files[0].contentType
+  
+
+      res.set('Content-disposition', `attachment; filename="${filename}"`);
+      res.set('Content-Type', contentType);
+      bucket.openDownloadStreamByName(filename).pipe(res);
+    })
 
 })
 
+
+router.get('/openMonthlyReport/:id',(req,res)=>{
+  var fileId = req.params.id
+    const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+    gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+    
+  
+      const readStream = bucket.openDownloadStream(files[0]._id);
+          readStream.pipe(res);
+  
+    })
+   //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+  })
 
 
 //student examfiles
@@ -10811,19 +10874,40 @@ router.get('/studentTermlyReportFiles/:id',isLoggedIn,records,function(req,res){
 
 
 router.get('/studentDownloadTermlyReport/:id',isLoggedIn,records,function(req,res){
-  var m = moment()
-  var month = m.format('MMMM')
-  var year = m.format('YYYY')
-  var mformat = m.format('L')
-  Report.findById(req.params.id,function(err,doc){
-    var name = doc.filename;
-    //res.download( './public/uploads/'+name, name)
+  var fileId = req.params.id
+    
  
-    res.download( './reportsExam/'+year+'/'+month+'/'+name, name)
-  })  
+  
+  //const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+  const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+  gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+  
+    console.log(files[0].filename,'files9')
+  let filename = files[0].filename
+  let contentType = files[0].contentType
+  
+
+      res.set('Content-disposition', `attachment; filename="${filename}"`);
+      res.set('Content-Type', contentType);
+      bucket.openDownloadStreamByName(filename).pipe(res);
+    })
 
 })
 
+
+
+router.get('/openStudentTermlyReport/:id',(req,res)=>{
+  var fileId = req.params.id
+    const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+    gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+    
+  
+      const readStream = bucket.openDownloadStream(files[0]._id);
+          readStream.pipe(res);
+  
+    })
+   //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+  })
 //teacher reports
 
 
@@ -11088,34 +11172,77 @@ let teacherName = hocs[0].teacherName
 
 
 router.get('/downloadMonthlyReport/:id',isLoggedIn,records,function(req,res){
-  var m = moment()
-  var month = m.format('MMMM')
-  var year = m.format('YYYY')
-  var mformat = m.format('L')
-  Report2.findById(req.params.id,function(err,doc){
-    var name = doc.filename;
-    //res.download( './public/uploads/'+name, name)
+  var fileId = req.params.id
+    
  
-    res.download( './reports2/'+year+'/'+month+'/'+name, name)
-  })  
+  
+  //const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+  const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+  gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+  
+    console.log(files[0].filename,'files9')
+  let filename = files[0].filename
+  let contentType = files[0].contentType
+  
+
+      res.set('Content-disposition', `attachment; filename="${filename}"`);
+      res.set('Content-Type', contentType);
+      bucket.openDownloadStreamByName(filename).pipe(res);
+    })
 
 })
 
 
 router.get('/downloadTermlyReport/:id',isLoggedIn,records,function(req,res){
-  var m = moment()
-  var month = m.format('MMMM')
-  var year = m.format('YYYY')
-  var mformat = m.format('L')
-  Report2.findById(req.params.id,function(err,doc){
-    var name = doc.filename;
-    //res.download( './public/uploads/'+name, name)
+  var fileId = req.params.id
+    
  
-    res.download( './reportsExam2/'+year+'/'+month+'/'+name, name)
-  })  
+  
+  //const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+  const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+  gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+  
+    console.log(files[0].filename,'files9')
+  let filename = files[0].filename
+  let contentType = files[0].contentType
+  
+
+      res.set('Content-disposition', `attachment; filename="${filename}"`);
+      res.set('Content-Type', contentType);
+      bucket.openDownloadStreamByName(filename).pipe(res);
+    }) 
 
 })
 
+
+router.get('/openTermlyReport/:id',(req,res)=>{
+  var fileId = req.params.id
+    const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+    gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+    
+  
+      const readStream = bucket.openDownloadStream(files[0]._id);
+          readStream.pipe(res);
+  
+    })
+   //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+  })
+  
+
+
+
+  router.get('/openMonthlyReports/:id',(req,res)=>{
+    var fileId = req.params.id
+      const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+      gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+      
+    
+        const readStream = bucket.openDownloadStream(files[0]._id);
+            readStream.pipe(res);
+    
+      })
+     //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+    })
 
   
     router.get('/teacherSubList',isLoggedIn,records, (req, res) => {
@@ -14385,6 +14512,276 @@ router.get('/onlineQuiz/delete/:id',isLoggedIn, (req, res) => {
     })
   })
   })
+
+
+
+//////////////////////
+
+
+    //generate att rport
+    router.get('/alloMonthBatchAttX',isLoggedIn,  function(req,res){
+      var pro = req.user
+      var errorMsg = req.flash('danger')[0];
+      var successMsg = req.flash('success')[0];
+      res.render('records/alloAttMonthBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+      })
+    
+    
+    
+    
+    
+    ////
+    
+    router.post('/alloMonthBatchAttX',isLoggedIn,  function(req,res){
+      var id =req.user._id
+      var month = req.body.month
+      var year = req.body.year
+      var pro = req.user
+    
+        
+        
+    
+      req.check('month','Enter  Month').notEmpty();
+      req.check('year','Enter Year').notEmpty();
+     
+     
+        
+      
+        
+        var errors = req.validationErrors();
+         
+        if (errors) {
+          req.session.errors = errors;
+          req.session.success = false;
+         // res.render('product/dispatchCust',{ errors:req.session.errors,pro:pro})
+    
+         req.flash('danger', req.session.errors[0].msg);
+           
+            
+         res.redirect('/records/alloMonthBatchAtt');
+    
+    
+        
+        }
+        
+        else {
+    
+        
+        
+        Year.findOne({'year':year})
+        .then(grower =>{
+        if(grower){
+          Month.findOne({'month':month})
+          .then(lock=>{
+            if(lock){
+       
+    User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelMonth:month}},function(err,docs){
+    
+    })
+    
+     
+    res.redirect('/records/reportGenAtt');
+            
+              
+              
+              
+            }
+          })
+    
+        
+    
+        
+        }else{
+    
+          req.flash('danger', 'Month/Year dont exist');
+     
+          res.redirect('/records/alloMonthBatchAtt');
+    
+    
+        
+    
+        }
+        
+        })
+        
+      }
+        })
+    
+
+    router.get('/reportGenAtt',isLoggedIn,function(req,res){
+      var hostel = req.user.hostel
+Hostel.find({name:hostel},function(err,docs){
+  console.log(docs,'docs')
+  for(var i=0;i<docs.length;i++){
+    let name = docs[i].name
+    console.log(name)
+     arrAttReg[name]=[]
+  }
+  res.redirect('/records/reportGen2Att')
+})
+
+    })
+router.get('/reportGen2Att',isLoggedIn,function(req,res){
+
+  var hostel = req.user.hostel
+  var uid = req.user.hostel
+console.log('vvx')
+var m = moment()
+var month =   req.user.hostelMonth
+  var year = m.format('YYYY')
+console.log(month,'mmmmm')
+//var term = req.user.term
+
+//let uid = "SZ125"
+
+
+//TestX.find({year:year,uid:uid},function(err,vocs) {
+  AttendanceReg.find({hostel:hostel,year:year,month:month}).lean().then(vocs=>{
+
+  
+for(var x = 0;x<vocs.length;x++){
+  //size = docs.length
+ // let subject = vocs[x].subject
+   
+   if( arrAttReg[uid].length > 0 && arrAttReg[uid].find(value => value.hostel == uid) ){
+ 
+    arrAttReg[uid].push(vocs[x])
+         //console.log(arr,'arrX')
+        }
+        
+         
+        
+        
+        else{
+          arrAttReg[uid].push(vocs[x])
+      
+              
+          } 
+
+
+      
+
+         
+
+
+        }
+        res.redirect('/records/reportGen3Att')
+      })
+
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    router.get('/reportGen3Att',isLoggedIn,function(req,res){
+      console.log(arrAttReg,'arr')
+      var term = req.user.term
+      var m = moment()
+      var month = m.format('MMMM')
+        var year = m.format('YYYY')
+        var mformat = m.format('L')
+        var hostel = req.user.hostel
+    
+        var head = req.user.fullname
+    /*console.log(arr,'iiii')*/
+   
+    //console.log(docs,'docs')
+   
+    
+    const compile = async function (templateName, arrAttReg){
+      const filePath = path.join(process.cwd(),'templates',`${templateName}.hbs`)
+    
+      const html = await fs.readFile(filePath, 'utf8')
+    
+      return hbs.compile(html)(arrAttReg)
+     
+    };
+    
+    
+    
+    
+     (async function(){
+    
+    try{
+    //const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ],
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
+    });
+    
+    const page = await browser.newPage()
+    
+    
+    
+     //const content = await compile('report3',arr[uid])
+     const content = await compile('reportAtt',arrAttReg[hostel])
+    
+    await page.setContent(content, { waitUntil: 'networkidle2'});
+     //await page.setContent(content)
+    //create a pdf document
+    await page.emulateMediaType('screen')
+    await page.evaluate(() => matchMedia('screen').matches);
+    await page.setContent(content, { waitUntil: 'networkidle0'});
+    //console.log(await page.pdf(),'7777')
+    
+    await page.pdf({
+      //path:('../gitzoid2/reports/'+year+'/'+month+'/'+uid+'.pdf'),
+      path:(`./eotReports/${year}/${term}/${hostel}`+'.pdf'),
+      format:"A4",
+      width:'30cm',
+    height:'21cm',
+      printBackground:true
+    })
+    
+    
+    
+    
+    
+    }catch(e) {
+    
+      console.log(e)
+    
+    
+    }
+    
+    }) ()
+    
+   
+     
+    
+    
+
+
+  
+    })
+
+
+
+
+
+
+ 
 
 
 

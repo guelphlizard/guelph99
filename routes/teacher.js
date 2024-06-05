@@ -34,6 +34,8 @@ const Topic =require('../models/topic');
 const Topic2 =require('../models/topic2');
 const Income =require('../models/incomeX');
 const Expenses = require('../models/expenses')
+const Year =require('../models/year')
+const Month =require('../models/month')
 const FeesUpdate =require('../models/feesUpdate');
 const Question = require('../models/question');
 const QuestionT = require('../models/questionT');
@@ -50,6 +52,10 @@ var bcrypt = require('bcrypt-nodejs');
 const classTestX = require('../models/classTestX');
 var imageData= uploadModel.find({})
 const arr={}
+const arrAtt ={}
+const arrAttReg ={}
+var Axios = require('axios')
+var FormData = require('form-data')
 
 
 const crypto = require('crypto');
@@ -5741,6 +5747,8 @@ router.get('/batchExam',isLoggedIn,teacher,  function(req,res){
   var user = req.user.term
   var teacherId = req.user.uid
   var pro = req.user
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
 
   var subject = req.user.subjects
   var subjectCode = req.user.subjectCode
@@ -5755,7 +5763,7 @@ router.get('/batchExam',isLoggedIn,teacher,  function(req,res){
    var arr2 = zoc
   var arr1 = docs;  
   
-  res.render('exam/batchExam',{ arr1:arr1,arr2:arr2,class1:class1, user:user, pro:pro, subject:subject,subjectCode:subjectCode, grade:grade})
+  res.render('exam/batchExam',{ arr1:arr1,arr2:arr2,class1:class1, user:user, pro:pro, subject:subject,subjectCode:subjectCode, grade:grade,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
   
   })
   })
@@ -5818,7 +5826,11 @@ arr1.push(docs[i].class1);
 }
 req.session.errors = errors;
 req.session.success = false
-res.render('exam/batchExam',{errors:req.session.errors, arr1:arr1,pro:pro,subject:subject,subjectCode:subjectCode,grade:grade})
+//res.render('exam/batchExam',{errors:req.session.errors, arr1:arr1,pro:pro,subject:subject,subjectCode:subjectCode,grade:grade})
+req.flash('danger', req.session.errors[0].msg);
+         
+          
+res.redirect('/teacher/batchExam');
 })
 
 
@@ -5835,12 +5847,16 @@ TeacherSub.find({teacherId:teacherId},function(err,docs){
 for(var i = 0;i<docs.length;i++){
 arr1.push(docs[i].class1);
 }
-req.session.message = {
+/*req.session.message = {
 type:'errors',
 message:'Test Exists'
 }     
 res.render('exam/batchExam', {
- message:req.session.message, arr1:arr1,pro:pro})
+ message:req.session.message, arr1:arr1,pro:pro})*/
+
+ req.flash('danger', 'Exam Exists');
+   
+ res.redirect('/teacher/batchExam');
 
 })
 
@@ -6508,7 +6524,7 @@ router.post('/comment/updateAtt/:id',isLoggedIn,teacher,function(req,res){
 })
   })
 
-
+/*
   router.get('/late/:id',isLoggedIn, (req, res) => {
     var id
  AttendanceReg.findByIdAndUpdate(req.params.id,{$set:{status:'Late'}},function(err,docs){
@@ -6529,7 +6545,64 @@ res.redirect('/teacher/viewLessonFile/'+id)
   res.redirect('/teacher/viewLessonFile/'+id)
  })
 
-    })
+    })*/
+
+
+
+    router.post('/late/:id',isLoggedIn, (req, res) => {
+      var id = req.params.id
+  console.log(id,'id')
+   AttendanceReg.findByIdAndUpdate(req.params.id,{$set:{status:'Late'}},function(err,docs){
+  
+    if(!err){
+  
+      id = docs.regId
+      res.send(docs)
+    
+       }
+  //res.redirect('/teacher/viewAttendanceFile/'+id)
+   })
+  
+      })
+  
+      router.post('/present/:id',isLoggedIn, (req, res) => {
+        var id = req.params.id
+    console.log(id,'id')
+     AttendanceReg.findByIdAndUpdate(req.params.id,{$set:{status:'Present'}},function(err,docs){
+    
+      if(!err){
+    
+        id = docs.regId
+        res.send(docs)
+      
+         }
+    //res.redirect('/teacher/viewAttendanceFile/'+id)
+     })
+    
+        })
+    
+    router.post('/absent/:id',isLoggedIn, (req, res) => {
+      var id 
+   AttendanceReg.findByIdAndUpdate(req.params.id,{$set:{status:'Absent'}},function(err,docs){
+     console.log(docs,'docs')
+  
+     if(!err){
+  
+    id = docs.regId
+    res.send(docs)
+  
+     }
+    /*console.log(id,'regId')
+    res.redirect('/hostel/viewAttendanceFile/'+id)*/
+   })
+  
+      })
+
+
+
+
+
+
 
 ///reg folder
 
@@ -6660,7 +6733,12 @@ let teacherName = hocs[0].teacherName
 router.get('/typeFolderClassReg/:id',isLoggedIn,teacher,function(req,res){
   var id = req.params.id
   var term = req.user.term
-  var year = 2023
+  var m = moment()
+
+  var month = m.format('MMMM')
+  var year = m.format('YYYY')
+
+  var mformat = m.format("L")
   var pro = req.user
   StudentSub.findById(id,function(err,doc){
     if(doc){
@@ -9539,19 +9617,57 @@ router.get('/typeFolderMaterial/:id',isLoggedIn,teacher,function(req,res){
   })
 
 
+  
+router.get('/openMonthlyReport/:id',(req,res)=>{
+  var fileId = req.params.id
+    const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+    gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+    
+  
+      const readStream = bucket.openDownloadStream(files[0]._id);
+          readStream.pipe(res);
+  
+    })
+   //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+  })
+  
+
   router.get('/downloadMonthlyReport/:id',isLoggedIn,teacher,function(req,res){
-    var m = moment()
-    var month = m.format('MMMM')
-    var year = m.format('YYYY')
-    var mformat = m.format('L')
-    Report2.findById(req.params.id,function(err,doc){
-      var name = doc.filename;
-      //res.download( './public/uploads/'+name, name)
-   
-      res.download( './reports2/'+year+'/'+month+'/'+name, name)
-    })  
+    var fileId = req.params.id
+  
+
+
+//const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+  console.log(files[0].filename,'files9')
+let filename = files[0].filename
+let contentType = files[0].contentType
+
+
+    res.set('Content-disposition', `attachment; filename="${filename}"`);
+    res.set('Content-Type', contentType);
+    bucket.openDownloadStreamByName(filename).pipe(res);
+  })
   
   })
+
+
+
+  router.get('/openMaterial/:id',(req,res)=>{
+    var fileId = req.params.id
+      const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+      gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+      
+    
+        const readStream = bucket.openDownloadStream(files[0]._id);
+            readStream.pipe(res);
+    
+      })
+     //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+    })
+    
 
   /*router.get('/downloadAssgt/:id',isLoggedIn,teacher,function(req,res){
     Test.findById(req.params.id,function(err,doc){
@@ -9889,6 +10005,342 @@ router.get('/test',function(req,res){
 
 
 
+/////////
+
+
+    //generate att rport
+    router.get('/alloMonthBatchAttX',isLoggedIn,  function(req,res){
+      var pro = req.user
+      var errorMsg = req.flash('danger')[0];
+      var successMsg = req.flash('success')[0];
+      res.render('records/alloAttMonthBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+      })
+    
+    
+    
+    
+    
+    ////
+    
+    router.post('/alloMonthBatchAttX',isLoggedIn,  function(req,res){
+      var id =req.user._id
+      var date= req.body.date
+      var year = req.body.year
+      var pro = req.user
+      var class1= req.user.class1
+    
+        
+        
+    
+      req.check('date','Enter  Date').notEmpty();
+      req.check('year','Enter Year').notEmpty();
+     
+     
+        
+      
+        
+        var errors = req.validationErrors();
+         
+        if (errors) {
+          req.session.errors = errors;
+          req.session.success = false;
+         // res.render('product/dispatchCust',{ errors:req.session.errors,pro:pro})
+    
+         req.flash('danger', req.session.errors[0].msg);
+           
+            
+         res.redirect('/teacher/alloMonthBatchAtt');
+    
+    
+        
+        }
+        
+        else {
+    
+        
+        
+        Year.findOne({'year':year})
+        .then(grower =>{
+        if(grower){
+       
+       
+    User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelMonth:date,class1:class1}},function(err,docs){
+    
+    })
+    
+     
+    res.redirect('/teacher/reportGenAtt');
+            
+              
+              
+              
+           
+    
+        
+    
+        
+        }else{
+    
+          req.flash('danger', 'Month/Year dont exist');
+     
+          res.redirect('/teacher/alloMonthBatchAtt');
+    
+    
+        
+    
+        }
+        
+        })
+        
+      }
+        })
+    
+
+    router.get('/reportGenAtt',isLoggedIn,function(req,res){
+      var class1 = req.user.class1
+/*User.find({class1:class1,role:"student"},function(err,docs){
+  console.log(docs,'docs')
+  for(var i=0;i<docs.length;i++){
+    let uid = docs[i].studentId
+    console.log(uid)
+     arrAttReg[uid]=[]
+  }
+ 
+})*/
+arrAttReg[class1]=[]
+
+res.redirect('/teacher/reportGen2Att')
+
+    })
+router.get('/reportGen2Att',isLoggedIn,function(req,res){
+
+  var class1 = req.user.class1
+  
+console.log('vvx')
+var dateX = req.user.hostelMonth
+let m = moment(dateX)
+
+var date =m.format('L')
+  var year = req.user.hostelYear
+console.log(date,'mmmmm')
+let month = m.format('MMMM')
+//var term = req.user.term
+
+//let uid = "SZ125"
+
+
+//TestX.find({year:year,uid:uid},function(err,vocs) {
+  AttendanceReg.find({class1:class1,year:year,month:month}).lean().then(vocs=>{
+
+  
+for(var x = 0;x<vocs.length;x++){
+  //size = docs.length
+ // let subject = vocs[x].subject
+
+   if( arrAttReg[class1].length > 0 && arrAttReg[class1].find(value => value.class1 == class1) ){
+ 
+    arrAttReg[class1].push(vocs[x])
+         //console.log(arr,'arrX')
+        }
+        
+         
+        
+        
+        else{
+          arrAttReg[class1].push(vocs[x])
+      
+              
+          } 
+
+
+      
+
+         
+
+
+        }
+        res.redirect('/teacher/reportGen3Att')
+      })
+
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    router.get('/reportGen3Att',isLoggedIn,function(req,res){
+      console.log(arrAttReg,'arr')
+      var term = req.user.term
+  
+      var m = moment()
+      var month = m.format('MMMM')
+        var year = m.format('YYYY')
+        var mformat = m.format('L')
+        var class1 = req.user.class1
+        let filename = month+'.pdf'
+        var head = req.user.fullname
+    /*console.log(arr,'iiii')*/
+   
+    //console.log(docs,'docs')
+   
+    
+    const compile = async function (templateName, arrAttReg){
+      const filePath = path.join(process.cwd(),'templates',`${templateName}.hbs`)
+    
+      const html = await fs.readFile(filePath, 'utf8')
+    
+      return hbs.compile(html)(arrAttReg)
+     
+    };
+    
+    
+    
+    
+     (async function(){
+    
+    try{
+    //const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ],
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
+    });
+    
+    const page = await browser.newPage()
+    
+    
+    
+     //const content = await compile('report3',arr[uid])
+     const content = await compile('reportAtt',arrAttReg[class1])
+    
+    await page.setContent(content, { waitUntil: 'networkidle2'});
+     //await page.setContent(content)
+    //create a pdf document
+    await page.emulateMediaType('screen')
+    await page.evaluate(() => matchMedia('screen').matches);
+    await page.setContent(content, { waitUntil: 'networkidle0'});
+    //console.log(await page.pdf(),'7777')
+    
+    await page.pdf({
+      //path:('../gitzoid2/reports/'+year+'/'+month+'/'+uid+'.pdf'),
+      //  path:(`./public/eotReports/${year}/${term}/${month}`+'.pdf'),
+      path:(`./public/reportsExam2/${year}/${term}/${month}`+'.pdf'),
+      format:"A4",
+      width:'30cm',
+    height:'21cm',
+      printBackground:true
+    })
+
+
+    var repo = new Report2();
+
+repo.subjectCode = '1AMaths';
+repo.month = month;
+repo.filename = month+'.pdf';
+repo.fileId = 'null'
+repo.year = year;
+repo.date = 'null'
+repo.term = term
+repo.type = "Final Exam"
+repo.save().then(poll =>{
+console.log("Done creating pdf")
+})
+
+
+
+const file = await fs.readFile(`./public/reportsExam2/${year}/${term}/${month}`+'.pdf');
+const form = new FormData();
+form.append("file", file,filename);
+//const headers = form.getHeaders();
+//Axios.defaults.headers.cookie = cookies;
+//console.log(form)
+await Axios({
+  method: "POST",
+  //url: 'http://localhost:9500/teacher/uploadAttReport',
+  url: 'https://portal.steuritinternationalschool.org/teacher/uploadAttReport',
+  headers: {
+    "Content-Type": "multipart/form-data"  
+  },
+  data: form
+});
+res.redirect('/teacher/dash')
+
+    
+    
+    
+    
+    
+    }catch(e) {
+    
+      console.log(e)
+    
+    
+    }
+    
+    }) ()
+    
+   
+     
+    
+    
+
+
+  
+    })
+
+
+
+
+
+
+
+
+
+
+    router.post('/uploadAttReport',upload.single('file'),(req,res,nxt)=>{
+      var fileId = req.file.id
+      console.log(fileId,'Receipt fileId')
+      var filename = req.file.filename
+      console.log(filename,'filename')
+      Report2.find({filename:filename},function(err,docs){
+    if(docs.length>0){
+    
+    
+    //console.log(docs,'docs')
+    let id = docs[0]._id
+    Report2.findByIdAndUpdate(id,{$set:{fileId:fileId}},function(err,tocs){
+    
+    })
+    req.flash('success', 'Attendance Report Generated Successfully');
+    res.redirect('/teacher/dash')
+    //res.redirect('/hostel/viewGatePass/'+id);
+    }
+    
+    
+    })
+    
+    })
+    
+    
 
 
 
