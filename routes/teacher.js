@@ -17,6 +17,7 @@ const TestX =require('../models/classTestX');
 const Lesson =require('../models/lesson');
 const Report = require('../models/reports');
 const Report2 = require('../models/reportsT');
+const ReportAtt = require('../models/reportsAtt');
 var Message = require('../models/message');
 var Recepient = require('../models/recepients');
 var Note = require('../models/note');
@@ -6238,8 +6239,8 @@ router.get('/attendanceBatch',isLoggedIn,teacher,  function(req,res){
 router.post('/attendanceBatch',isLoggedIn,teacher,  function(req,res){
   var pro = req.user
 var class1 = req.body.class1;
-var subject = req.body.subject;
-var subjectCode = req.body.subjectCode;
+var subject = 'null';
+var subjectCode = 'null';
 var date = req.body.date;
 var id = req.user._id;
 var teacherId = req.user.uid
@@ -6273,7 +6274,7 @@ console.log(docs,'horror')
 */
 
 req.check('class1','Enter Class').notEmpty();
-req.check('subject','Enter Subject').notEmpty();
+
 
 req.check('date','Enter Date').notEmpty();
 
@@ -6371,7 +6372,7 @@ Attendance.findByIdAndUpdate(tesn._id,{$set:{regId:tesn._id}},function(err,jocs)
 
 })
 
-StudentSub.find({class1:class1, subjectCode:subjectCode},function(err,zoc){
+StudentSub.find({class1:class1 /*subjectCode:subjectCode*/},function(err,zoc){
   for(var i = 0; i<zoc.length;i++){
     var test = new AttendanceReg();
 test.uid = zoc[i].studentId;
@@ -6605,7 +6606,7 @@ res.redirect('/teacher/viewLessonFile/'+id)
 
 
 ///reg folder
-
+/*
 router.get('/folderReg',isLoggedIn,function(req,res){
   var pro = req.user
   var id = req.user._id
@@ -6641,11 +6642,30 @@ router.get('/folderReg',isLoggedIn,function(req,res){
   })
 
 })
+*/
+
+router.get('/folderReg',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var uid = req.user._id
+  var arr = []
+  var m = moment()
+    var year = m.format('YYYY')
+  User.findByIdAndUpdate(uid,{$set:{hostelYear:id}},function(err,locs){
+
+  })
+
+  Month.find({}).sort({num:1}).then(docs=>{
+     
+          res.render('teachrFolderReg/month',{pro:pro,listX:docs,id:id})
+
+  })
+  
+})
 
 
 
-
-
+/*
 router.get('/classFolderReg/:id',isLoggedIn,teacher,function(req,res){
   var pro = req.user
   var id = req.params.id
@@ -6688,7 +6708,7 @@ router.get('/classFolderReg/:id',isLoggedIn,teacher,function(req,res){
   })
 })
 
-
+*/
 
 
 
@@ -6705,78 +6725,54 @@ router.get('/classFolderReg/:id',isLoggedIn,teacher,function(req,res){
 router.get('/typeFolderReg/:id',isLoggedIn,teacher,function(req,res){
   var pro = req.user
   var id = req.params.id
-StudentSub.findById(id,function(err,doc){
-  if(doc){
-  let class1 = doc.class1
-  let subjectCode = doc.subjectCode
-  let subject = doc.subjectName
-
-  TeacherSub.find({subjectCode:subjectCode},function(err,hocs){
-let teacherId = hocs[0].teacherId
-let id3 = hocs[0]._id
-let teacherName = hocs[0].teacherName
-  User.find({uid:teacherId},function(err,nocs){
-    let id2 = nocs[0]._id
- User.findByIdAndUpdate(id2,{$set:{class1:class1}},function(err,voc){
+  var m = moment()
+  var year = m.format('YYYY')
+  var class1 = req.user.class1
 
 
 
-    res.render('teachrFolderReg/fileAssgt2',{id:id,pro:pro,id2:id2,id3:id3,subject:subject,class1:class1})
-  })
+
+
+    res.render('teachrFolderReg/fileAssgt2',{id:id,pro:pro,class1:class1})
+
+
+
 })
-  })
-}
-})
-})
+
+
 
 
 router.get('/typeFolderClassReg/:id',isLoggedIn,teacher,function(req,res){
   var id = req.params.id
   var term = req.user.term
   var m = moment()
-
-  var month = m.format('MMMM')
+   var class1 = req.user.class1
+  var month = req.params.id
   var year = m.format('YYYY')
 
   var mformat = m.format("L")
   var pro = req.user
-  StudentSub.findById(id,function(err,doc){
-    if(doc){
-
-   
-    let class1 = doc.class1
-    let studentSubId = doc._id
-    let subjectCode = doc.subjectCode
-    let subjectName = doc.subjectName
-    TeacherSub.find({subjectCode:subjectCode},function(err,poc){
-      let teacherId =poc[0].teacherId
-      let teacherSubId = poc[0]._id
-      let teacherName = poc[0].teacherName
-      User.find({uid:teacherId},function(err,zocs){
-        let userId = zocs[0]._id
-        let class1 = zocs[0].class1
+ 
      
  
   
  
-    Attendance.find({class1:class1,subjectCode:subjectCode,term:term,year:year,type:'Class Register'},function(err,locs){
+    Attendance.find({class1:class1,term:term,month:month,year:year,type:'Class Register'},function(err,locs){
       let arr=[]
       for(var i = locs.length - 1; i>=0; i--){
   
         arr.push(locs[i])
       }
-      res.render('teachrFolderReg/assgtX1',{listX:arr,pro:pro,userId:userId,studentSubId:studentSubId,teacherSubId:teacherSubId,id:id,
-        subjectName:subjectName,class1:class1})
+      res.render('teachrFolderReg/assgtX1',{listX:arr,pro:pro,id:id,class1:class1})
     })
-  })
+  
+
 
   
-})
-}
-})
-  
   })
   
+
+
 
 ///view lesson
 
@@ -6806,10 +6802,10 @@ TeacherSub.find({teacherId:uid,subjectCode:subjectCode},function(err,locs){
  StudentSub.find({subjectCode:subjectCode,class1:class1},function(err,tocs){
    let studentSubId = tocs[0]._id
    AttendanceReg.find({regId:id},function(err,docs){
-
+  let month = docs[0].month
 
 res.render('teachrFolderReg/assgtList',{listX:docs,userId:userId,teacherSubId:teacherSubId,studentSubId:studentSubId,pro:pro,id:id,subject:subject,teacherName:teacherName,
-class1:class1})
+class1:class1,month:month})
   })
 })
 })
@@ -6856,7 +6852,144 @@ class1:class1})
     
     })
   
+  ///////
   
+router.get('/folderRegFiles',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var uid = req.user._id
+  var class1 = req.user.class1
+  var arr = []
+  var m = moment()
+    var year = m.format('YYYY')
+ 
+    res.render('teachrFolderRegFiles/fileAssgt2',{id:id,pro:pro,class1:class1})
+
+
+  
+})
+
+
+router.get('/typeFolderClassMonthlyRegFiles',isLoggedIn,function(req,res){
+  var pro = req.user
+  var id = req.params.id
+  var uid = req.user._id
+  var arr = []
+  var m = moment()
+    var year = m.format('YYYY')
+  User.findByIdAndUpdate(uid,{$set:{hostelYear:id}},function(err,locs){
+
+  })
+
+  Month.find({}).sort({num:1}).then(docs=>{
+     
+          res.render('teachrFolderRegFiles/month',{pro:pro,listX:docs,id:id})
+
+  })
+  
+})
+
+
+
+
+
+
+
+router.get('/typeFolderMonthlyRegFiles/:id',isLoggedIn,teacher,function(req,res){
+  var arr = []
+  var month = req.params.id
+  var errorMsg = req.flash('danger')[0];
+  var successMsg = req.flash('success')[0];
+   var term = req.user.term
+   var m = moment()
+   var pro = req.user
+   var year = m.format('YYYY')
+
+   var date = req.user.invoCode
+ ReportAtt.find({year:year,month:month},function(err,docs){
+     if(docs){
+ 
+   
+      let arr=[]
+      for(var i = docs.length - 1; i>=0; i--){
+  
+        arr.push(docs[i])
+      }
+ 
+ 
+ res.render('teachrFolderRegFiles/filesTerm2',{listX:arr,month:month,pro:pro,year:year,term:term,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg}) 
+ }
+ })
+    
+ })
+ 
+
+
+
+router.get('/typeFolderDailyRegFiles/',isLoggedIn,teacher,function(req,res){
+ var arr = []
+ var errorMsg = req.flash('danger')[0];
+ var successMsg = req.flash('success')[0];
+  var term = req.user.term
+  var m = moment()
+  var pro = req.user
+  var year = m.format('YYYY')
+  var month = m.format('MMMM')
+  var date = req.user.invoCode
+ReportAtt.find({year:year,date:date},function(err,docs){
+    if(docs){
+
+  
+     let arr=[]
+     for(var i = docs.length - 1; i>=0; i--){
+ 
+       arr.push(docs[i])
+     }
+
+
+res.render('teachrFolderRegFiles/filesTerm',{listX:arr,pro:pro,year:year,term:term,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg}) 
+}
+})
+   
+})
+
+
+
+router.get('/downloadDailyAttReport/:id',(req,res)=>{
+  var fileId = req.params.id
+  
+
+
+//const bucket = new GridFsStorage(db, { bucketName: 'uploads' });
+const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+
+  console.log(files[0].filename,'files9')
+let filename = files[0].filename
+let contentType = files[0].contentType
+
+
+    res.set('Content-disposition', `attachment; filename="${filename}"`);
+    res.set('Content-Type', contentType);
+    bucket.openDownloadStreamByName(filename).pipe(res);
+  })
+ //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+})
+
+
+
+router.get('/openDailyAttReport/:id',(req,res)=>{
+  var fileId = req.params.id
+    const bucket = new mongodb.GridFSBucket(conn.db,{ bucketName: 'uploads' });
+    gfs.files.find({_id: mongodb.ObjectId(fileId)}).toArray((err, files) => {
+    
+  
+      const readStream = bucket.openDownloadStream(files[0]._id);
+          readStream.pipe(res);
+  
+    })
+   //gfs.openDownloadStream(ObjectId(mongodb.ObjectId(fileId))).pipe(fs.createWriteStream('./outputFile'));
+  })
 
 
 
@@ -10009,11 +10142,11 @@ router.get('/test',function(req,res){
 
 
     //generate att rport
-    router.get('/alloMonthBatchAttX',isLoggedIn,  function(req,res){
+    router.get('/alloDayBatchAttX',isLoggedIn,  function(req,res){
       var pro = req.user
       var errorMsg = req.flash('danger')[0];
       var successMsg = req.flash('success')[0];
-      res.render('records/alloAttMonthBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
+      res.render('records/alloAttDayBatch',{pro:pro,successMsg: successMsg,errorMsg:errorMsg, noMessages: !successMsg,noMessages2:!errorMsg})
       })
     
     
@@ -10022,10 +10155,14 @@ router.get('/test',function(req,res){
     
     ////
     
-    router.post('/alloMonthBatchAttX',isLoggedIn,  function(req,res){
+    router.post('/alloDayBatchAttX',isLoggedIn,  function(req,res){
       var id =req.user._id
       var date= req.body.date
-      var year = req.body.year
+    
+      var m = moment()
+      var displayFormat = m.format('MMMM Do YYYY')
+      var dateValueOf = m2.valueOf()
+      var year = m.format('YYYY')
       var pro = req.user
       var class1= req.user.class1
     
@@ -10033,7 +10170,7 @@ router.get('/test',function(req,res){
         
     
       req.check('date','Enter  Date').notEmpty();
-      req.check('year','Enter Year').notEmpty();
+     
      
      
         
@@ -10049,7 +10186,7 @@ router.get('/test',function(req,res){
          req.flash('danger', req.session.errors[0].msg);
            
             
-         res.redirect('/teacher/alloMonthBatchAtt');
+         res.redirect('/teacher/alloDayBatchAtt');
     
     
         
@@ -10064,7 +10201,7 @@ router.get('/test',function(req,res){
         if(grower){
        
        
-    User.findByIdAndUpdate(id,{$set:{hostelYear:year,hostelMonth:date,class1:class1}},function(err,docs){
+    User.findByIdAndUpdate(id,{$set:{hostelYear:year,invoCode:date,class1:class1}},function(err,docs){
     
     })
     
@@ -10081,9 +10218,9 @@ router.get('/test',function(req,res){
         
         }else{
     
-          req.flash('danger', 'Month/Year dont exist');
+          req.flash('danger', 'Date dont exist');
      
-          res.redirect('/teacher/alloMonthBatchAtt');
+          res.redirect('/teacher/alloDayBatchAtt');
     
     
         
@@ -10117,20 +10254,20 @@ router.get('/reportGen2Att',isLoggedIn,function(req,res){
   var class1 = req.user.class1
   
 console.log('vvx')
-var dateX = req.user.hostelMonth
+/*var dateX = req.user.hostelMonth
 let m = moment(dateX)
 
-var date =m.format('L')
+var date =m.format('L')*/
   var year = req.user.hostelYear
-console.log(date,'mmmmm')
-let month = m.format('MMMM')
+//console.log(date,'mmmmm')
+let date = req.user.invoCode
 //var term = req.user.term
 
 //let uid = "SZ125"
 
 
 //TestX.find({year:year,uid:uid},function(err,vocs) {
-  AttendanceReg.find({class1:class1,year:year,month:month}).lean().then(vocs=>{
+  AttendanceReg.find({class1:class1,year:year,date:date}).lean().then(vocs=>{
 
   
 for(var x = 0;x<vocs.length;x++){
@@ -10180,15 +10317,15 @@ for(var x = 0;x<vocs.length;x++){
 
 
     router.get('/reportGen3Att',isLoggedIn,function(req,res){
-      console.log(arrAttReg,'arr')
+      //console.log(arrAttReg,'arr')
       var term = req.user.term
-  
+       var date = req.user.invoCode
       var m = moment()
       var month = m.format('MMMM')
         var year = m.format('YYYY')
         var mformat = m.format('L')
         var class1 = req.user.class1
-        let filename = month+'.pdf'
+        let filename = date+'_Register'+'.pdf'
         var head = req.user.fullname
     /*console.log(arr,'iiii')*/
    
@@ -10243,7 +10380,7 @@ for(var x = 0;x<vocs.length;x++){
     await page.pdf({
       //path:('../gitzoid2/reports/'+year+'/'+month+'/'+uid+'.pdf'),
       //  path:(`./public/eotReports/${year}/${term}/${month}`+'.pdf'),
-      path:(`./public/reportsExam2/${year}/${term}/${month}`+'.pdf'),
+      path:(`./public/attReports/${year}/${month}/${date}_Register`+'.pdf'),
       format:"A4",
       width:'30cm',
     height:'21cm',
@@ -10251,23 +10388,23 @@ for(var x = 0;x<vocs.length;x++){
     })
 
 
-    var repo = new Report2();
+    var repo = new ReportAtt();
 
-repo.subjectCode = '1AMaths';
+repo.subjectCode = 'null';
 repo.month = month;
-repo.filename = month+'.pdf';
+repo.filename = filename;
 repo.fileId = 'null'
 repo.year = year;
-repo.date = 'null'
+repo.date = date
 repo.term = term
-repo.type = "Final Exam"
+repo.type = "Class Register"
 repo.save().then(poll =>{
 console.log("Done creating pdf")
 })
 
 
 
-const file = await fs.readFile(`./public/reportsExam2/${year}/${term}/${month}`+'.pdf');
+const file = await fs.readFile(`./public/attReports/${year}/${month}/${date}_Register`+'.pdf');
 const form = new FormData();
 form.append("file", file,filename);
 //const headers = form.getHeaders();
@@ -10275,8 +10412,8 @@ form.append("file", file,filename);
 //console.log(form)
 await Axios({
   method: "POST",
-  //url: 'http://localhost:9500/teacher/uploadAttReport',
-  url: 'https://portal.steuritinternationalschool.org/teacher/uploadAttReport',
+  url: 'http://localhost:9500/teacher/uploadAttReport',
+  //url: 'https://portal.steuritinternationalschool.org/teacher/uploadAttReport',
   headers: {
     "Content-Type": "multipart/form-data"  
   },
@@ -10321,13 +10458,13 @@ res.redirect('/teacher/dash')
       console.log(fileId,'Receipt fileId')
       var filename = req.file.filename
       console.log(filename,'filename')
-      Report2.find({filename:filename},function(err,docs){
+      ReportAtt.find({filename:filename},function(err,docs){
     if(docs.length>0){
     
     
     //console.log(docs,'docs')
     let id = docs[0]._id
-    Report2.findByIdAndUpdate(id,{$set:{fileId:fileId}},function(err,tocs){
+    ReportAtt.findByIdAndUpdate(id,{$set:{fileId:fileId}},function(err,tocs){
     
     })
     req.flash('success', 'Attendance Report Generated Successfully');
