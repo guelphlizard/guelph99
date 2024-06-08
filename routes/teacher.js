@@ -6642,22 +6642,43 @@ router.get('/folderReg',isLoggedIn,function(req,res){
   })
 
 })
-*/
+*////typeFolderReg/:id
 
-router.get('/folderReg',isLoggedIn,function(req,res){
+router.get('/folderReg',isLoggedIn,teacher,function(req,res){
   var pro = req.user
   var id = req.params.id
+  var m = moment()
+  var year = m.format('YYYY')
+  var class1 = req.user.class1
+
+
+
+
+
+    res.render('teachrFolderReg/fileAssgt2',{id:id,pro:pro,class1:class1})
+
+
+
+})
+
+
+
+
+router.get('/typeFolderReg',isLoggedIn,function(req,res){
+  var pro = req.user
+  var m = moment()
+  var year = m.format('YYYY')
   var uid = req.user._id
   var arr = []
   var m = moment()
     var year = m.format('YYYY')
-  User.findByIdAndUpdate(uid,{$set:{hostelYear:id}},function(err,locs){
+  User.findByIdAndUpdate(uid,{$set:{hostelYear:year}},function(err,locs){
 
   })
 
   Month.find({}).sort({num:1}).then(docs=>{
      
-          res.render('teachrFolderReg/month',{pro:pro,listX:docs,id:id})
+          res.render('teachrFolderReg/month',{pro:pro,listX:docs})
 
   })
   
@@ -6722,22 +6743,7 @@ router.get('/classFolderReg/:id',isLoggedIn,teacher,function(req,res){
 
 
 
-router.get('/typeFolderReg/:id',isLoggedIn,teacher,function(req,res){
-  var pro = req.user
-  var id = req.params.id
-  var m = moment()
-  var year = m.format('YYYY')
-  var class1 = req.user.class1
 
-
-
-
-
-    res.render('teachrFolderReg/fileAssgt2',{id:id,pro:pro,class1:class1})
-
-
-
-})
 
 
 
